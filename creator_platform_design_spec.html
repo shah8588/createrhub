@@ -1,0 +1,2139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Creator Platform — Complete Page Design Specification</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,700;1,9..144,400&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0f0e0c;--paper:#faf8f4;--cream:#f0ece3;--warm:#e8e1d4;
+  --accent:#c84b31;--accent2:#2d6a4f;--accent3:#1a3a5c;--gold:#b8860b;
+  --muted:#6b6256;--muted2:#9e9689;--border:#ddd8ce;--border2:#c8c2b6;
+  --next:#0070f3;--laravel:#ef4444;--both:#7c3aed;
+  --p0:#b8860b;--p1:#c84b31;--p2:#1a5276;--p3:#1e8449;--p4:#6c3483;--p5:#922b21;
+  --font-display:'Fraunces',Georgia,serif;
+  --font-body:'DM Sans',system-ui,sans-serif;
+  --font-mono:'JetBrains Mono',monospace;
+}
+body{font-family:var(--font-body);background:var(--paper);color:var(--ink);font-size:14px;line-height:1.65}
+
+/* TOP */
+.masthead{
+  background:var(--ink);color:var(--paper);
+  padding:3rem 3rem 2rem;
+  background-image:radial-gradient(ellipse at 20% 50%,rgba(200,75,49,.15) 0%,transparent 50%),
+                   radial-gradient(ellipse at 80% 20%,rgba(0,112,243,.1) 0%,transparent 50%);
+}
+.mast-eyebrow{font-family:var(--font-mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:.75rem}
+.mast-title{font-family:var(--font-display);font-size:2.8rem;font-weight:300;line-height:1.1;margin-bottom:1rem}
+.mast-title em{font-style:italic;color:var(--gold)}
+.mast-sub{font-size:13px;color:rgba(250,248,244,.55);max-width:600px;font-weight:300}
+.mast-stats{display:flex;gap:2.5rem;margin-top:2rem;padding-top:2rem;border-top:1px solid rgba(255,255,255,.1)}
+.mast-stat .n{font-family:var(--font-display);font-size:2rem;font-weight:700;color:var(--paper)}
+.mast-stat .l{font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:rgba(250,248,244,.4);margin-top:2px}
+
+/* LEGEND */
+.legend{background:var(--cream);border-bottom:1px solid var(--border2);padding:.75rem 3rem;display:flex;gap:1.5rem;flex-wrap:wrap;align-items:center}
+.leg-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted)}
+.leg-dot{width:8px;height:8px;border-radius:2px}
+
+/* LAYOUT */
+.wrap{display:flex;min-height:100vh}
+.toc{
+  width:220px;flex-shrink:0;background:var(--cream);
+  border-right:1px solid var(--border);
+  padding:1.5rem 0;position:sticky;top:0;height:100vh;overflow-y:auto;
+}
+.toc-section{font-family:var(--font-mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted2);padding:.5rem 1.25rem;margin-top:.75rem}
+.toc-link{display:block;padding:.3rem 1.25rem;font-size:11px;color:var(--muted);text-decoration:none;border-left:2px solid transparent;transition:all .1s}
+.toc-link:hover{color:var(--ink);border-left-color:var(--accent)}
+.main{flex:1;overflow:hidden}
+
+/* PHASE HEADERS */
+.phase-hdr{padding:2.5rem 3rem 2rem;border-bottom:2px solid var(--border2)}
+.phase-pill{display:inline-flex;align-items:center;font-family:var(--font-mono);font-size:9px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;padding:4px 12px;border-radius:2px;margin-bottom:1rem}
+.phase-hdr h2{font-family:var(--font-display);font-size:1.6rem;font-weight:300;color:var(--ink);margin-bottom:.4rem}
+.phase-hdr h2 em{font-style:italic}
+.phase-hdr p{font-size:13px;color:var(--muted);max-width:650px}
+.phase-meta{display:flex;gap:2rem;margin-top:1rem;font-family:var(--font-mono);font-size:10px;color:var(--muted);flex-wrap:wrap}
+.phase-meta span{color:var(--ink);font-weight:500}
+
+/* PAGE CARDS */
+.pages-grid{padding:2rem 3rem;display:grid;gap:1.5rem}
+
+.page-card{
+  border:1px solid var(--border);
+  border-radius:4px;
+  overflow:hidden;
+  background:white;
+}
+.pc-header{
+  padding:1.25rem 1.5rem;
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:.75rem;
+  border-bottom:1px solid var(--border);
+}
+.pc-route{font-family:var(--font-mono);font-size:10px;color:var(--muted2);margin-bottom:.35rem}
+.pc-title{font-family:var(--font-display);font-size:1.1rem;font-weight:500;color:var(--ink);line-height:1.2}
+.pc-badges{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.5rem}
+.badge{font-family:var(--font-mono);font-size:9px;font-weight:500;padding:2px 7px;border-radius:2px;letter-spacing:.04em}
+.b-next{background:rgba(0,112,243,.08);color:#0050b3;border:1px solid rgba(0,112,243,.2)}
+.b-laravel{background:rgba(239,68,68,.08);color:#b91c1c;border:1px solid rgba(239,68,68,.2)}
+.b-both{background:rgba(124,58,237,.08);color:#5b21b6;border:1px solid rgba(124,58,237,.2)}
+.b-mobile{background:rgba(5,150,105,.08);color:#065f46;border:1px solid rgba(5,150,105,.2)}
+.b-public{background:rgba(180,83,9,.08);color:#92400e;border:1px solid rgba(180,83,9,.2)}
+
+.pc-meta-right{text-align:right}
+.pc-phase-tag{font-family:var(--font-mono);font-size:9px;font-weight:600;padding:3px 8px;border-radius:2px}
+
+/* BODY */
+.pc-body{padding:1.5rem;display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+.pc-body.wide{grid-template-columns:1fr}
+.pc-body.thirds{grid-template-columns:1fr 1fr 1fr}
+
+.design-block{background:var(--cream);border-radius:3px;padding:1.1rem 1.25rem;border:1px solid var(--border)}
+.design-block h4{font-family:var(--font-mono);font-size:9px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:.65rem}
+.design-block p{font-size:12px;color:var(--ink);line-height:1.7;margin-bottom:.5rem}
+.design-block p:last-child{margin-bottom:0}
+
+.visual-block{background:var(--ink);border-radius:3px;padding:1.1rem 1.25rem;border:1px solid var(--ink)}
+.visual-block h4{font-family:var(--font-mono);font-size:9px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:.65rem}
+.visual-block p{font-size:12px;color:rgba(250,248,244,.7);line-height:1.7}
+
+.layout-block{border-radius:3px;padding:1.1rem 1.25rem;border:1px solid var(--border2);background:white}
+.layout-block h4{font-family:var(--font-mono);font-size:9px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--accent3);margin-bottom:.65rem}
+.layout-block p{font-size:12px;color:var(--muted);line-height:1.7}
+
+.comp-block{border-radius:3px;padding:1.1rem 1.25rem;border:1px solid var(--border2);background:white}
+.comp-block h4{font-family:var(--font-mono);font-size:9px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--accent2);margin-bottom:.65rem}
+.comp-block ul{list-style:none;padding:0}
+.comp-block ul li{font-size:12px;color:var(--muted);padding:.15rem 0;padding-left:1rem;position:relative;line-height:1.5}
+.comp-block ul li::before{content:'→';position:absolute;left:0;color:var(--accent2);font-size:10px;top:2px}
+
+/* WIREFRAME SKETCH */
+.sketch{
+  background:var(--paper);
+  border:1.5px dashed var(--border2);
+  border-radius:3px;
+  padding:1rem;
+  font-family:var(--font-mono);
+  font-size:10px;
+  color:var(--muted);
+  line-height:1.8;
+  white-space:pre;
+  overflow:hidden;
+}
+
+/* DIVIDERS */
+.section-div{height:1px;background:var(--border);margin:0 3rem}
+
+/* TABS WITHIN PAGE */
+.tab-group{display:flex;gap:0;margin-bottom:1.25rem;border-bottom:2px solid var(--border)}
+.tab{font-family:var(--font-mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:.45rem 1rem;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-2px;cursor:default}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+/* MOTION SPEC */
+.motion-line{display:flex;align-items:center;gap:.75rem;padding:.4rem 0;border-bottom:1px solid var(--border);font-size:11px}
+.motion-line:last-child{border-bottom:none}
+.motion-el{font-family:var(--font-mono);font-size:10px;color:var(--ink);font-weight:500;min-width:120px}
+.motion-anim{color:var(--muted);flex:1}
+.motion-val{font-family:var(--font-mono);font-size:9px;color:var(--accent);min-width:80px;text-align:right}
+
+/* COLOUR SWATCHES */
+.swatches{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.5rem}
+.swatch{width:32px;height:32px;border-radius:3px;border:1px solid var(--border)}
+.swatch-label{font-family:var(--font-mono);font-size:8px;color:var(--muted2);margin-top:2px;text-align:center}
+
+/* STATE PILLS */
+.states{display:flex;gap:.4rem;flex-wrap:wrap}
+.state{font-family:var(--font-mono);font-size:9px;padding:2px 8px;border-radius:2px;background:var(--cream);color:var(--muted);border:1px solid var(--border)}
+.state.danger{background:rgba(200,75,49,.08);color:var(--accent);border-color:rgba(200,75,49,.2)}
+.state.success{background:rgba(30,132,73,.08);color:var(--accent2);border-color:rgba(30,132,73,.2)}
+.state.info{background:rgba(26,58,92,.08);color:var(--accent3);border-color:rgba(26,58,92,.2)}
+
+/* SUMMARY TABLE */
+.summary-table{width:100%;border-collapse:collapse}
+.summary-table th{font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted2);padding:8px;border-bottom:1px solid var(--border2);text-align:left}
+.summary-table td{padding:8px;border-bottom:1px solid var(--border);font-size:12px;vertical-align:top}
+.summary-table tr:hover td{background:var(--cream)}
+.page-count{font-family:var(--font-mono);font-size:11px;font-weight:600;color:var(--ink)}
+.total-row td{font-family:var(--font-mono);font-weight:600;background:var(--cream)}
+
+@media(max-width:900px){
+  .toc{display:none}
+  .pc-body{grid-template-columns:1fr}
+  .masthead{padding:2rem}
+  .pages-grid{padding:1.25rem}
+  .phase-hdr{padding:1.5rem}
+}
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="mast-eyebrow">Creator Platform · UI/UX Design System</div>
+  <h1 class="mast-title">Page Design<br><em>Specification</em></h1>
+  <p class="mast-sub">Layout, visual direction, component breakdown, interaction patterns, and motion design — for every page in the platform, organised by phase.</p>
+  <div class="mast-stats">
+    <div class="mast-stat"><div class="n">68</div><div class="l">Unique Pages</div></div>
+    <div class="mast-stat"><div class="n">6</div><div class="l">Phases</div></div>
+    <div class="mast-stat"><div class="n">3</div><div class="l">User Types</div></div>
+    <div class="mast-stat"><div class="n">1</div><div class="l">Design Language</div></div>
+  </div>
+</div>
+
+<div class="legend">
+  <span style="font-size:11px;color:var(--muted);font-weight:500">Stack:</span>
+  <span class="leg-item"><span class="leg-dot" style="background:#0070f3"></span>Next.js only</span>
+  <span class="leg-item"><span class="leg-dot" style="background:#ef4444"></span>Laravel (API)</span>
+  <span class="leg-item"><span class="leg-dot" style="background:#7c3aed"></span>Both</span>
+  <span class="leg-item"><span class="leg-dot" style="background:#059669"></span>Mobile (RN Expo)</span>
+  <span class="leg-item"><span class="leg-dot" style="background:#b45309"></span>Public / Multi-tenant</span>
+</div>
+
+<div class="wrap">
+<nav class="toc">
+  <div class="toc-section">0 · Auth & Onboarding</div>
+  <a href="#register" class="toc-link">Register</a>
+  <a href="#login" class="toc-link">Login</a>
+  <a href="#verify-email" class="toc-link">Verify Email</a>
+  <a href="#forgot-password" class="toc-link">Forgot Password</a>
+  <a href="#onboarding" class="toc-link">Onboarding Wizard</a>
+  <div class="toc-section">1 · Creator Dashboard</div>
+  <a href="#creator-home" class="toc-link">Home / KPIs</a>
+  <a href="#courses-list" class="toc-link">Courses List</a>
+  <a href="#course-builder" class="toc-link">Course Builder</a>
+  <a href="#lesson-editor" class="toc-link">Lesson Editor</a>
+  <a href="#quiz-builder" class="toc-link">Quiz Builder</a>
+  <a href="#certificate-builder" class="toc-link">Certificate Builder</a>
+  <a href="#students-crm" class="toc-link">Students CRM</a>
+  <a href="#student-detail" class="toc-link">Student Detail</a>
+  <a href="#payments-dash" class="toc-link">Payments</a>
+  <a href="#qa-inbox" class="toc-link">Q&A Inbox</a>
+  <a href="#reviews" class="toc-link">Reviews</a>
+  <a href="#settings" class="toc-link">Settings</a>
+  <div class="toc-section">2 · Website Builder</div>
+  <a href="#page-list" class="toc-link">Pages List</a>
+  <a href="#page-builder" class="toc-link">Page Builder</a>
+  <a href="#blog-editor" class="toc-link">Blog Editor</a>
+  <a href="#theme-editor" class="toc-link">Theme Editor</a>
+  <div class="toc-section">3 · Public Website</div>
+  <a href="#public-home" class="toc-link">Creator Homepage</a>
+  <a href="#course-sales" class="toc-link">Course Sales Page</a>
+  <a href="#checkout-page" class="toc-link">Checkout</a>
+  <a href="#thankyou-page" class="toc-link">Thank-You</a>
+  <a href="#public-blog" class="toc-link">Blog</a>
+  <div class="toc-section">4 · Student Portal</div>
+  <a href="#student-home" class="toc-link">Student Home</a>
+  <a href="#course-player" class="toc-link">Course Player</a>
+  <a href="#quiz-player" class="toc-link">Quiz Player</a>
+  <a href="#community" class="toc-link">Community</a>
+  <a href="#student-certs" class="toc-link">Certificates</a>
+  <a href="#student-purchases" class="toc-link">Purchases</a>
+  <div class="toc-section">5 · Marketing Tools</div>
+  <a href="#email-campaigns" class="toc-link">Email Campaigns</a>
+  <a href="#email-builder" class="toc-link">Email Builder</a>
+  <a href="#automations" class="toc-link">Automations</a>
+  <a href="#contacts" class="toc-link">Contacts</a>
+  <a href="#whatsapp" class="toc-link">WhatsApp</a>
+  <div class="toc-section">6 · Analytics</div>
+  <a href="#analytics-home" class="toc-link">Analytics Home</a>
+  <a href="#course-analytics" class="toc-link">Course Analytics</a>
+  <div class="toc-section">7 · Growth</div>
+  <a href="#affiliates" class="toc-link">Affiliates</a>
+  <a href="#coupons" class="toc-link">Coupons</a>
+  <a href="#live-classes" class="toc-link">Live Classes</a>
+  <div class="toc-section">8 · AI Tools</div>
+  <a href="#ai-tools" class="toc-link">AI Tools Hub</a>
+  <div class="toc-section">9 · Mobile App</div>
+  <a href="#mobile-home" class="toc-link">Mobile Home</a>
+  <a href="#mobile-player" class="toc-link">Mobile Player</a>
+  <div class="toc-section">10 · Platform</div>
+  <a href="#pricing-page" class="toc-link">Pricing Page</a>
+  <a href="#admin-panel" class="toc-link">Admin Panel</a>
+</nav>
+
+<div class="main">
+
+<!-- ═══════════════════════════════════════ -->
+<!-- PHASE 0: AUTH & ONBOARDING -->
+<!-- ═══════════════════════════════════════ -->
+<div class="phase-hdr">
+  <div class="phase-pill" style="background:rgba(184,134,11,.1);color:var(--p0);border:1px solid rgba(184,134,11,.25)">◆ Phase 0 — Auth & Onboarding</div>
+  <h2>First <em>impressions</em> & account setup</h2>
+  <p>The trust-building zone. Clean, focused, zero distraction. Every pixel earns its place. Design language: editorial calm with confident warmth — not a SaaS startup, more like a trusted Indian fintech.</p>
+  <div class="phase-meta">Pages: <span>5</span> &nbsp;·&nbsp; Stack: <span>Next.js + Laravel Sanctum</span> &nbsp;·&nbsp; Breakpoints: <span>Mobile-first</span></div>
+</div>
+
+<div class="pages-grid">
+
+<!-- REGISTER -->
+<div class="page-card" id="register">
+  <div class="pc-header">
+    <div>
+      <div class="pc-route">/register</div>
+      <div class="pc-title">Creator Registration</div>
+      <div class="pc-badges">
+        <span class="badge b-both">Next.js + Laravel</span>
+        <span class="badge b-public">Public Route</span>
+      </div>
+    </div>
+    <div class="pc-meta-right">
+      <div class="pc-phase-tag" style="background:rgba(184,134,11,.1);color:var(--p0)">Phase 0</div>
+    </div>
+  </div>
+  <div class="pc-body">
+    <div class="design-block">
+      <h4>Visual Direction</h4>
+      <p><strong>Split-screen layout:</strong> Left 55% — dark ink panel with animated course mockup (3D card stack rotating slowly), real creator testimonial quote, stat "₹2.3Cr earned by creators this month". Right 45% — clean white card, form centred vertically.</p>
+      <p><strong>Typography:</strong> Display font "Fraunces" for left panel headline — "Teach what you know. Get paid for it." — italic, oversized, elegant. Body DM Sans for form labels.</p>
+      <p><strong>Micro-detail:</strong> On hover over left panel — the card stack spreads to reveal 3 sample course thumbnails with price badges (₹2,999). Parallax on scroll (if mobile: collapses to header strip).</p>
+    </div>
+    <div class="layout-block">
+      <h4>Layout Structure</h4>
+      <div class="sketch">┌──────────────────────────────┐
+│ LEFT PANEL (dark #0f0e0c)    │
+│  Logo top-left               │
+│  ┌──────────────────────┐   │
+│  │ 3D course card stack  │   │
+│  │  (CSS perspective)    │   │
+│  └──────────────────────┘   │
+│  "Teach what you know."      │
+│  [★ Creator testimonial]    │
+│  ₹2.3Cr earned this month   │
+├──────────────────────────────┤
+│ RIGHT PANEL (white)          │
+│  "Create your account"       │
+│  [Full Name         ]        │
+│  [Email             ]        │
+│  [Password    ] [Confirm]    │
+│  [●●●● strength meter]       │
+│  [Continue with Google]      │
+│  Already have account? Login │
+└──────────────────────────────┘</div>
+    </div>
+    <div class="comp-block">
+      <h4>Key Components</h4>
+      <ul>
+        <li>Password strength meter (4-segment bar: red/orange/yellow/green)</li>
+        <li>Google OAuth button (official G logo, flat style)</li>
+        <li>Inline field validation (check appears on valid, red on blur+invalid)</li>
+        <li>Terms checkbox with modal preview (no new tab)</li>
+        <li>Submit button → loading spinner → success checkmark animation</li>
+      </ul>
+    </div>
+    <div class="visual-block">
+      <h4>Motion & Interaction</h4>
+      <p><strong>On page load:</strong> Left panel fades up (0.4s ease). Card stack rotates in (0.6s spring). Right panel slides in from right (0.35s).</p>
+      <p><strong>On submit:</strong> Button scales down → spinner → green check. Then slide transition to /verify-email.</p>
+      <p><strong>Error state:</strong> Field border turns red, error text slides down 8px, input shakes (keyframe: ±4px × 3).</p>
+    </div>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div class="page-card" id="login">
+  <div class="pc-header">
+    <div>
+      <div class="pc-route">/login</div>
+      <div class="pc-title">Creator Login</div>
+      <div class="pc-badges"><span class="badge b-both">Next.js + Laravel</span><span class="badge b-public">Public</span></div>
+    </div>
+    <div class="pc-meta-right"><div class="pc-phase-tag" style="background:rgba(184,134,11,.1);color:var(--p0)">Phase 0</div></div>
+  </div>
+  <div class="pc-body">
+    <div class="design-block">
+      <h4>Visual Direction</h4>
+      <p><strong>Centred card on gradient background.</strong> Background: warm off-white with subtle radial gradient (cream to warm sand). Central card: white, 520px wide, generous padding, single drop shadow (not harsh — like physical paper on table).</p>
+      <p><strong>Above card:</strong> Platform logo mark + "Welcome back". Below card: "New to [Platform]? Start for free →"</p>
+      <p><strong>Design signature:</strong> Thin gold (#b8860b) rule above the card title. Platform name uses Fraunces italic.</p>
+    </div>
+    <div class="comp-block">
+      <h4>Key Components</h4>
+      <ul>
+        <li>Email + password fields (clean, no floating labels)</li>
+        <li>"Forgot password?" — right-aligned link, muted until hover</li>
+        <li>Google OAuth divider ("or continue with")</li>
+        <li>"Remember me" checkbox — subtle, not intrusive</li>
+        <li>Login button — full width, brand primary colour</li>
+      </ul>
+    </div>
+    <div class="design-block">
+      <h4>Student Login Tab</h4>
+      <p>Toggle tabs: "Creator" / "Student". Student tab: shows WhatsApp OTP flow — phone input (+91 prefix, auto-format) + "Send OTP" → 6-digit OTP input (auto-focus each box). Resend timer: 60s countdown.</p>
+      <p>Tab transition: smooth slide (content slides left/right on toggle, no jump).</p>
+    </div>
+    <div class="layout-block">
+      <h4>States</h4>
+      <div class="states">
+        <span class="state">default</span>
+        <span class="state info">loading</span>
+        <span class="state danger">invalid credentials</span>
+        <span class="state">unverified email (inline prompt)</span>
+        <span class="state success">success (redirect)</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- VERIFY EMAIL -->
+<div class="page-card" id="verify-email">
+  <div class="pc-header">
+    <div>
+      <div class="pc-route">/verify-email</div>
+      <div class="pc-title">Email Verification</div>
+      <div class="pc-badges"><span class="badge b-next">Next.js</span></div>
+    </div>
+    <div class="pc-meta-right"><div class="pc-phase-tag" style="background:rgba(184,134,11,.1);color:var(--p0)">Phase 0</div></div>
+  </div>
+  <div class="pc-body wide">
+    <div class="design-block">
+      <h4>Visual Direction</h4>
+      <p><strong>Single-focus screen.</strong> Centred layout, illustrated envelope icon (custom SVG, not emoji — animated: envelope flap opens and a small paper comes out on load). Large "Check your inbox" heading (Fraunces display). Email address shown bold. Two actions: Resend (with 60s cooldown timer showing grey countdown circle) and "Open Gmail" / "Open Outlook" quick links (detected from email domain).</p>
+      <p>Background: very light warm paper with subtle dot-grid pattern. This entire page is essentially one message — calm, not urgent.</p>
+    </div>
+  </div>
+</div>
+
+<!-- FORGOT PASSWORD -->
+<div class="page-card" id="forgot-password">
+  <div class="pc-header">
+    <div>
+      <div class="pc-route">/forgot-password · /reset-password</div>
+      <div class="pc-title">Password Reset Flow</div>
+      <div class="pc-badges"><span class="badge b-both">Next.js + Laravel</span></div>
+    </div>
+    <div class="pc-meta-right"><div class="pc-phase-tag" style="background:rgba(184,134,11,.1);color:var(--p0)">Phase 0</div></div>
+  </div>
+  <div class="pc-body">
+    <div class="design-block">
+      <h4>Step 1 — Request Link</h4>
+      <p>Minimal: just logo, one heading, one email field, one button. No distractions. Progress indicator: step 1 of 2 (thin top bar).</p>
+      <p>On submit: animated transition — page fades, email icon bounces, "Reset link sent to {email}" message with inbox quick-link buttons.</p>
+    </div>
+    <div class="design-block">
+      <h4>Step 2 — New Password</h4>
+      <p>URL has token pre-validated by Laravel. Two fields: new password + confirm. Password strength meter. Real-time match indicator ("Passwords match ✓"). Submit → success screen with confetti burst (subtle, 2s) + redirect to login after 3s.</p>
+      <p>Error: expired token → clear message, "Request a new link" CTA. Never a generic error.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ONBOARDING WIZARD -->
+<div class="page-card" id="onboarding">
+  <div class="pc-header">
+    <div>
+      <div class="pc-route">/onboarding · /onboarding/[step]</div>
+      <div class="pc-title">Creator Onboarding Wizard</div>
+      <div class="pc-badges"><span class="badge b-both">Next.js + Laravel</span></div>
+    </div>
+    <div class="pc-meta-right"><div class="pc-phase-tag" style="background:rgba(184,134,11,.1);color:var(--p0)">Phase 0</div></div>
+  </div>
+  <div class="pc-body">
+    <div class="design-block">
+      <h4>Visual Direction</h4>
+      <p><strong>5-step wizard.</strong> Left sidebar: step list (numbered 1–5, completed = green checkmark, current = accent dot, upcoming = muted). Each step feels like a "reveal" — slide-in from right on advance, slide-out left on back.</p>
+      <p>Steps: 1. Profile (avatar upload + bio + slug), 2. Connect Razorpay (big illustrated OAuth button), 3. GST setup (optional but prominent benefit copy), 4. Create first course (mini course creation inline), 5. Launch — "Your school is ready" with shareable link.</p>
+    </div>
+    <div class="layout-block">
+      <h4>Layout</h4>
+      <div class="sketch">┌─────────────────────────────────┐
+│ [Steps sidebar 200px] [Content] │
+│  ✓ 1. Profile      Profile form │
+│  ● 2. Razorpay     with avatar  │
+│  ○ 3. GST          upload       │
+│  ○ 4. First Course preview      │
+│  ○ 5. Launch                    │
+│  ─────────────────              │
+│  Skip & explore →               │
+│       [Back]  [Continue →]      │
+└─────────────────────────────────┘</div>
+    </div>
+    <div class="comp-block">
+      <h4>Key Components</h4>
+      <ul>
+        <li>Step 2: Razorpay Connect — illustrated card with "Why connect?" tooltip</li>
+        <li>Avatar upload: drag-drop zone + crop circle modal (react-easy-crop)</li>
+        <li>Slug preview: live URL bar showing [slug].platform.com updates as you type</li>
+        <li>Progress: animated fill bar top of page (20% → 100%)</li>
+        <li>Step 5: Animated "🎉 Your school is live" with copyable link + confetti</li>
+      </ul>
+    </div>
+    <div class="visual-block">
+      <h4>Tone & Copy</h4>
+      <p>Conversational, never corporate. Step 2 header: "How do you want to get paid?" Step 3: "Want GST invoices auto-generated? (most creators do)". The wizard should feel like a friendly setup call, not a form.</p>
+    </div>
+  </div>
+</div>
+
+</div><!-- /pages-grid phase 0 -->
+<div class="section-div"></div>
+
+
+<!-- PHASE 1: CREATOR DASHBOARD -->
+<div class="phase-hdr">
+  <div class="phase-pill" style="background:rgba(200,75,49,.1);color:var(--p1);border:1px solid rgba(200,75,49,.25)">◆ Phase 1 — Creator Dashboard</div>
+  <h2>The <em>nerve centre</em> — where creators build & earn</h2>
+  <p>Design language: confident dark theme with warm amber accents. Information-dense but never cluttered. Like a Bloomberg terminal but for course creators. Every number tells a story.</p>
+  <div class="phase-meta">Pages: <span>12</span> &nbsp;·&nbsp; Stack: <span>Next.js (App Router) + Laravel API</span></div>
+</div>
+
+<div class="pages-grid">
+
+<!-- CREATOR HOME KPIs -->
+<div class="page-card" id="creator-home">
+  <div class="pc-header">
+    <div>
+      <div class="pc-route">/dashboard</div>
+      <div class="pc-title">Creator Home — KPI Dashboard</div>
+      <div class="pc-badges"><span class="badge b-both">Next.js + Laravel</span></div>
+    </div>
+    <div class="pc-meta-right"><div class="pc-phase-tag" style="background:rgba(200,75,49,.1);color:var(--p1)">Phase 1</div></div>
+  </div>
+  <div class="pc-body">
+    <div class="design-block">
+      <h4>Visual Direction</h4>
+      <p><strong>Dark dashboard.</strong> Background #0f0e0c. Cards use #1a1917. Warm amber (#b8860b) for revenue numbers — makes money feel golden. Muted slate for secondary metrics.</p>
+      <p><strong>Hero KPI row:</strong> 4 stat cards — Today's Revenue, Month Revenue, Total Students, Active Courses. Each has: large number (Fraunces display), trend arrow + %, sparkline (Recharts). Hover: card lifts 2px with glow.</p>
+      <p><strong>Below KPIs:</strong> Left 60% — Revenue trend chart (AreaChart, amber fill, subtle). Right 40% — Activity feed (timestamped, with emoji icons: 💰 payment, 👤 enrolment, ⭐ review, ❓ question).</p>
+    </div>
+    <div class="layout-block">
+      <h4>Layout</h4>
+      <div class="sketch">┌──────────────────────────────────────┐
+│ SIDEBAR │ Good morning, Shahnawaz  │
+│         │ ──────────────────────── │
+│ Home    │ [₹12,400] [₹89K] [247] [6│
+│ Courses │  Today    Month  Students Courses
+│ Students│ ──────────────────────── │
+│ Payments│ [Revenue Chart 60%]  [Feed│
+│ Email   │                      40%]│
+│ Q&A  ●3 │ ──────────────────────── │
+│ Settings│ Quick Actions            │
+│         │ + New Course  ↑ Invite   │
+└──────────────────────────────────────┘</div>
+    </div>
+    <div class="comp-block">
+      <h4>Key Components</h4>
+      <ul>
+        <li>KPI cards: skeleton loader (pulsing shimmer) on load</li>
+        <li>Revenue chart: period selector (7d/30d/90d) as pill tabs</li>
+        <li>Activity feed: auto-scroll to latest, "Load more" at top</li>
+        <li>Quick action buttons: "Create Course", "Enrol Student", "Send Email"</li>
+        <li>Pending Q&A badge: red dot on sidebar + top notification bell</li>
+        <li>Onboarding progress bar (dismissible after 100%)</li>
+      </ul>
+    </div>
+    <div class="visual-block">
+      <h4>Motion Design</h4>
+      <p><strong>Number counter:</strong> KPI numbers animate from 0 to value on page load (0.8s, ease-out). This is the signature moment — feels like a Bloomberg terminal lighting up.</p>
+      <p><strong>Revenue chart:</strong> Line draws from left to right on load (stroke-dashoffset animation, 1s).</p>
+      <p><strong>Activity items:</strong> Stagger in from right (each delayed 50ms).</p>
+    </div>
+  </div>
+</div>
+
+<!-- COURSES LIST -->
+<div class="page-card" id="courses-list">
+  <div class="pc-header">
+    <div>
+      <div class="pc-route">/dashboard/courses</div>
+      <div class="pc-title">Courses List & Management</div>
+      <div class="pc-badges"><span class="badge b-both">Next.js + Laravel</span></div>
+    </div>
+    <div class="pc-meta-right"><div class="pc-phase-tag" style="background:rgba(200,75,49,.1);color:var(--p1)">Phase 1</div></div>
+  </div>
+  <div class="pc-body">
+    <div class="design-block">
+      <h4>Visual Direction</h4>
+      <p><strong>Card + table hybrid.</strong> Toggle between card view and table view (persisted in localStorage). Card view: 3-column grid of course cards. Each card: thumbnail (16:9), title, status pill (Draft/Published/Archived), student count, revenue earned, quick actions (Edit, View, Duplicate, Archive).</p>
+      <p><strong>Empty state:</strong> Illustrated rocket on launchpad. "Launch your first course" with large "Create Course" CTA. Not a generic empty box — feels aspirational.</p>
+    </div>
+    <div class="comp-block">
+      <h4>Key Components</h4>
+      <ul>
+        <li>Course card: hover reveals quick-action overlay (Edit, View, Duplicate)</li>
+        <li>Status pill: Draft (grey), Published (green), Archived (muted) — consistent across platform</li>
+        <li>Search bar: filters cards in real-time (client-side, React Query cache)</li>
+        <li>Sort: by date, revenue, students, title</li>
+        <li>"+ New Course" button — fixed in top-right, always visible</li>
+        <li>Course card thumbnail: if none, shows gradient placeholder with course initials</li>
+      </ul>
+    </div>
+    <div class="layout-block">
+      <h4>Course Card Design</h4>
+      <div class="sketch">┌─────────────────────┐
+│ [Thumbnail 16:9]    │
+│ ● Published         │
+├─────────────────────┤
+│ Trading Masterclass │
+│ for Beginners       │
+│ ─────────────────── │
+│ 124 students · ₹18K │
+│ [Edit]       [···]  │
+└─────────────────────┘</div>
+    </div>
+  </div>
+</div>
+
+<!-- COURSE BUILDER -->
+<div class="page-card" id="course-builder">
+  <div class="pc-header">
+    <div>
+      <div class="pc-route">/dashboard/courses/[id]/curriculum</div>
+      <div class="pc-title">Course Curriculum Builder</div>
+      <div class="pc-badges"><span class="badge b-both">Next.js + Laravel</span></div>
+    </div>
+    <div class="pc-meta-right"><div class="pc-phase-tag" style="background:rgba(200,75,49,.1);color:var(--p1)">Phase 1</div></div>
+  </div>
+  <div class="pc-body">
+    <div class="design-block">
+      <h4>Visual Direction</h4>
+      <p><strong>Split editor layout.</strong> Left panel (340px): collapsible sidebar with course sections nav (Curriculum, Settings, Pricing, Sales Page, Students, Analytics, Certificate). Main area: curriculum tree.</p>
+      <p><strong>Curriculum tree:</strong> Accordion-style modules with sortable lessons. Module headers: bold, with collapse toggle + drag handle (⠿ gripper icon). Lessons: indented, type icon (▶ video, 📄 text, 📎 file, 🎯 quiz), duration, free preview toggle, drip badge. All drag-droppable (@dnd-kit).</p>
+      <p><strong>Colour coding:</strong> Video = blue tint, Text = green tint, Quiz = amber tint, File = purple tint.</p>
+    </div>
+    <div class="layout-block">
+      <h4>Layout</h4>
+      <div class="sketch">┌─────────────────────────────────────┐
+│ [Curriculum] Settings Pricing Sales │ ← tab bar
+├──────────────────────────────────────┤
+│ ⠿ Module 1: Introduction        ↓ v │
+│   ▶ 1.1 Welcome Video     5:30  ●   │
+│   📄 1.2 Getting Started       FREE │
+│   + Add Lesson                       │
+│ ⠿ Module 2: Core Concepts       ↓ v │
+│   ▶ 2.1 Deep Dive         12:00     │
+│   🎯 2.2 Knowledge Check           │
+│   + Add Lesson                       │
+│ + Add Module                         │
+│ ───────────────────────────────────  │
+│ [Save Draft]          [Publish →]    │
+└─────────────────────────────────────┘</div>
+    </div>
+    <div class="comp-block">
+      <h4>Key Interactions</h4>
+      <ul>
+        <li>Click lesson → opens LessonEditor in right panel (ResizablePanelGroup)</li>
+        <li>Drag module → whole module (with all lessons) moves</li>
+        <li>"Add Lesson" — inline input appears, type to name, Enter to create</li>
+        <li>Free preview toggle: pill switch, instantly saves</li>
+        <li>Drip badge: shows "Day 5" label, click to edit drip days</li>
+        <li>Bulk select: shift+click, then bulk drip/delete</li>
+      </ul>
+    </div>
+    <div class="visual-block">
+      <h4>Save States</h4>
+      <p><strong>Auto-save indicator:</strong> Top-right shows "Saving..." → "All changes saved" → timestamp. If offline: "Unsaved changes — reconnect to save" (amber warning).</p>
+      <p><strong>Publish flow:</strong> Button click → validation checklist modal (has lessons? has pricing? has thumbnail?) → all green → "Course is live!" toast with confetti burst.</p>
+    </div>
+  </div>
+</div>
+
+<!-- LESSON EDITOR -->
+<div class="page-card" id="lesson-editor">
+  <div class="pc-header">
+    <div>
+      <div class="pc-route">/dashboard/courses/[id]/lessons/[lessonId]</div>
+      <div class="pc-title">Lesson Editor — Tabbed Content Types</div>
+      <div class="pc-badges"><span class="badge b-both">Next.js + Laravel</span></div>
+    </div>
+    <div class="pc-meta-right"><div class="pc-phase-tag" style="background:rgba(200,75,49,.1);color:var(--p1)">Phase 1</div></div>
+  </div>
+  <div class="pc-body">
+    <div class="design-block">
+      <h4>Visual Direction</h4>
+      <p><strong>Right panel editor</strong> (Sheet component) slides from right — 640px wide. Feels like an IDE file editor. Dark background (#1a1917). Header: lesson type icon + title input (editable inline). Tabs: Video | Text | Files | Settings.</p>
+      <p><strong>Video tab:</strong> Huge upload dropzone (dashed border, accepts drag). Progress: horizontal bar with % + speed. After upload: video thumbnail preview with "Processing..." shimmer → "Ready" green badge.</p>
+      <p><strong>Text tab:</strong> Full TipTap editor. Toolbar top. Content area fills remaining height. Auto-save dot (•) in top-right changes from grey to amber (saving) to green (saved).</p>
+    </div>
+    <div class="comp-block">
+      <h4>Video Upload States</h4>
+      <ul>
+        <li>Idle: large dashed dropzone with cloud icon + "Drop MP4 here or click to upload"</li>
+        <li>Uploading: progress bar + file name + speed (MB/s) + cancel button</li>
+        <li>Processing: thumbnail with spinning Mux logo overlay + "Transcoding..."</li>
+        <li>Ready: thumbnail + duration + quality badges (360p / 720p / 1080p)</li>
+        <li>Error: red border + error message + "Try again" button</li>
+      </ul>
+    </div>
+    <div class="layout-block">
+      <h4>Settings Tab</h4>
+      <div class="sketch">┌────────────────────────────────┐
+│ Settings                       │
+│ ─────────────────────────────  │
+│ Drip release                   │
+│ [○ Immediately ● After X days] │
+│ Release after [  7  ] days     │
+│                                │
+│ Prerequisite                   │
+│ [Must complete: ▼ select]      │
+│                                │
+│ Free Preview [toggle: ON]      │
+│ Downloadable [toggle: OFF]     │
+│                                │
+│ [Delete Lesson]                │
+└────────────────────────────────┘</div>
+    </div>
+    <div class="visual-block">
+      <h4>AI Integration Spots</h4>
+      <p>Lesson title input: after typing + blur → subtle "✨ Generate description" prompt appears below (calls AI endpoint). Hovering shows preview of generated text.</p>
+      <p>Video tab: after upload completes → "✨ Transcribe & generate quiz" button appears. Single click does both (transcription + quiz generation queued).</p>
+    </div>
+  </div>
+</div>
+
+<!-- QUIZ BUILDER -->
+<div class="page-card" id="quiz-builder">
+  <div class="pc-header">
+    <div>
+      <div class="pc-route">/dashboard/courses/[id]/lessons/[id]/quiz</div>
+      <div class="pc-title">Quiz Builder</div>
+      <div class="pc-badges"><span class="badge b-both">Next.js + Laravel</span></div>
+    </div>
+    <div class="pc-meta-right"><div class="pc-phase-tag" style="background:rgba(200,75,49,.1);color:var(--p1)">Phase 1</div></div>
+  </div>
+  <div class="pc-body">
+    <div class="design-block">
+      <h4>Visual Direction</h4>
+      <p><strong>Stacked question cards.</strong> Each question is a card with: question number badge (amber circle), question text (editable), type selector (MCQ / True-False / Fill-in-blank), answer options. MCQ: radio inputs with "Add option" link. Correct answer: green check toggle on each option.</p>
+      <p><strong>Add question:</strong> Large dashed "Add Question" card at bottom. Or: "✨ Generate from video transcript" — pops AI side panel with streaming questions appearing one by one.</p>
+    </div>
+    <div class="comp-block">
+      <h4>Question Card Anatomy</h4>
+      <ul>
+        <li>Drag handle left, delete button right</li>
+        <li>Question text: inline editing (contenteditable div)</li>
+        <li>Type badge: MCQ / True-False / Fill — clickable to change type</li>
+        <li>Options: each has radio + text input + "Correct ✓" toggle</li>
+        <li>Explanation field: collapsible "Add explanation" (shown to students after answering)</li>
+        <li>Points: small input top-right of card</li>
+      </ul>
+    </div>
+    <div class="layout-block">
+      <h4>Quiz Settings Sidebar</h4>
+      <div class="sketch">Passing score: [70] %
+Max attempts:  [3] (0=unlimited)
+Randomise:     [✓] Questions
+Show answers:  [✓] After attempt
+Time limit:    [○ None ● 30 min]
+Placement:     [End of lesson]</div>
+    </div>
+  </div>
+</div>
+
+<!-- CERTIFICATE BUILDER -->
+<div class="page-card" id="certificate-builder">
+  <div class="pc-header">
+    <div>
+      <div class="pc-route">/dashboard/courses/[id]/certificate</div>
+      <div class="pc-title">Certificate Template Builder</div>
+      <div class="pc-badges"><span class="badge b-next">Next.js (Konva.js)</span></div>
+    </div>
+    <div class="pc-meta-right"><div class="pc-phase-tag" style="background:rgba(200,75,49,.1);color:var(--p1)">Phase 1</div></div>
+  </div>
+  <div class="pc-body">
+    <div class="design-block">
+      <h4>Visual Direction</h4>
+      <p><strong>Canvas editor — landscape A4 preview.</strong> Left panel: element palette (Logo, Student Name, Course Name, Date, Signature Line, Decorative Border, Star Rating, Custom Text). Centre: live A4 canvas (Konva Stage) with drag-and-drop elements. Right panel: selected element's properties (font, size, colour, position).</p>
+      <p><strong>Template starter gallery:</strong> Before building, show 6 pre-designed templates (Classic Gold, Minimal Modern, Indian Traditional motif, Corporate Blue, Warm Earthy, Bold Dark). One-click to apply, then customise.</p>
+      <p><strong>Background:</strong> Colour picker + gradient editor + image upload. Certificate itself has elegant decorative border SVG options.</p>
+    </div>
+    <div class="comp-block">
+      <h4>Key Features</h4>
+      <ul>
+        <li>"Preview with real data" — fills in sample student name + today's date</li>
+        <li>Export preview as PNG (client-side Konva export)</li>
+        <li>Undo/Redo (Ctrl+Z) — history stack via useReducer</li>
+        <li>Snap to grid (toggle), alignment guides (blue lines appear on drag)</li>
+        <li>Z-index controls: "Bring forward" / "Send back"</li>
+        <li>Font family selector: Google Fonts (filtered to legible display fonts)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- STUDENTS CRM -->
+<div class="page-card" id="students-crm">
+  <div class="pc-header">
+    <div>
+      <div class="pc-route">/dashboard/students</div>
+      <div class="pc-title">Students CRM List</div>
+      <div class="pc-badges"><span class="badge b-both">Next.js + Laravel</span></div>
+    </div>
+    <div class="pc-meta-right"><div class="pc-phase-tag" style="background:rgba(200,75,49,.1);color:var(--p1)">Phase 1</div></div>
+  </div>
+  <div class="pc-body">
+    <div class="design-block">
+      <h4>Visual Direction</h4>
+      <p><strong>Full-width data table.</strong> Clean, high-density, like a professional CRM. Sticky header row. Zebra striping (very subtle, barely visible). Columns: Avatar+Name, Email, Courses Enrolled (badge count), Total Paid, Last Active (relative "3 days ago"), Progress (mini bar), Actions.</p>
+      <p><strong>Top bar:</strong> Search (debounced, searches name+email), Course filter dropdown, Date range filter, Export CSV button, "Enrol Student +" button.</p>
+      <p><strong>Row hover:</strong> Background lightens slightly, "View →" button slides in from right.</p>
+    </div>
+    <div class="comp-block">
+      <h4>Filter Panel (Slide-over)</h4>
+      <ul>
+        <li>Enrolled in specific course (multi-select)</li>
+        <li>Enrolled date range (date picker)</li>
+        <li>Progress range (0–100% slider)</li>
+        <li>Payment amount range</li>
+        <li>Last active within (7d / 30d / 90d / all)</li>
+        <li>Apply + Clear buttons with result count preview</li>
+      </ul>
+    </div>
+    <div class="visual-block">
+      <h4>Bulk Actions</h4>
+      <p>Checkbox column (leftmost). Check any row → bulk action bar slides up from bottom (sticky): "X students selected — [Send Email] [Enrol in Course] [Export] [Revoke Access]". Clear selection button. Feels like Gmail bulk select.</p>
+    </div>
+  </div>
+</div>
+
+<!-- STUDENT DETAIL -->
+<div class="page-card" id="student-detail">
+  <div class="pc-header">
+    <div>
+      <div class="pc-route">/dashboard/students/[id]</div>
+      <div class="pc-title">Student Detail View</div>
+      <div class="pc-badges"><span class="badge b-both">Next.js + Laravel</span></div>
+    </div>
+    <div class="pc-meta-right"><div class="pc-phase-tag" style="background:rgba(200,75,49,.1);color:var(--p1)">Phase 1</div></div>
+  </div>
+  <div class="pc-body">
+    <div class="design-block">
+      <h4>Visual Direction</h4>
+      <p><strong>Profile header + tabbed content.</strong> Top: student avatar (large, 64px), name, email, phone, WhatsApp status (green ✓ or grey ✗), joined date. Actions row: "Send Email", "Manual Enrol", "Add Note", kebab menu (Revoke Access, etc.).</p>
+      <p>Tabs: Enrolments | Payments | Quiz Results | Notes. Each tab: a clean table with relevant data. Timeline on right sidebar: all activity chronologically (payment, lesson complete, quiz pass, certificate).</p>
+    </div>
+    <div class="comp-block">
+      <h4>Enrolments Tab</h4>
+      <ul>
+        <li>Course card: thumbnail (small 48px), course name, progress bar, status badge</li>
+        <li>Progress bar: coloured fill (green = active, amber = expired, red = revoked)</li>
+        <li>Inline actions: "View Progress Details", "Extend Access", "Revoke"</li>
+        <li>Empty: "Not enrolled in any course — Enrol now +"</li>
+      </ul>
+    </div>
+    <div class="layout-block">
+      <h4>Notes Section</h4>
+      <div class="sketch">Creator private notes (not visible to student)
+──────────────────────────────────────
+[Add note...                 ] [Save]
+
+◎ 22 May — "Paid via installment, 
+   2 of 3 paid. Follow up May 30."
+◎ 15 May — "Referred by Ravi Sharma"</div>
+    </div>
+  </div>
+</div>
+
+<!-- PAYMENTS DASHBOARD -->
+<div class="page-card" id="payments-dash">
+  <div class="pc-header">
+    <div>
+      <div class="pc-route">/dashboard/payments</div>
+      <div class="pc-title">Payments & Invoices</div>
+      <div class="pc-badges"><span class="badge b-both">Next.js + Laravel</span></div>
+    </div>
+    <div class="pc-meta-right"><div class="pc-phase-tag" style="background:rgba(200,75,49,.1);color:var(--p1)">Phase 1</div></div>
+  </div>
+  <div class="pc-body">
+    <div class="design-block">
+      <h4>Visual Direction</h4>
+      <p><strong>Finance-grade layout.</strong> Top: 4 stat tiles (Today ₹, This Month ₹, This Month GST ₹, Total ₹). Each: large amber number on dark card. Mini trend arrow.</p>
+      <p>Below: Full-width transaction table. Columns: Date, Student, Course, Base Amount, GST, Total, Method (badge: UPI/Card/EMI/Wallet), Status (badge), Invoice (PDF icon → download). Each row: transaction number in monospace font. Table sorted newest first.</p>
+      <p><strong>GST column:</strong> Hover shows tooltip with CGST/SGST vs IGST breakdown. Important for CA/accountant access.</p>
+    </div>
+    <div class="comp-block">
+      <h4>Filters + Export</h4>
+      <ul>
+        <li>Date range picker (quick: Today, This Week, This Month, Custom)</li>
+        <li>Course filter dropdown (multi-select)</li>
+        <li>Payment method filter (checkboxes)</li>
+        <li>Status filter (Captured / Refunded / Failed)</li>
+        <li>"Export CSV" + "Export for GSTR-1" (Excel format)</li>
+        <li>Applied filters shown as removable tags below search bar</li>
+      </ul>
+    </div>
+    <div class="visual-block">
+      <h4>Invoice Download Flow</h4>
+      <p>PDF icon in row → click → brief loading spinner (fetching R2 signed URL) → browser download triggers. If invoice not yet generated: "Generating..." state with 3s retry. All GST invoices are branded with creator's logo and GSTIN.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Q&A INBOX -->
+<div class="page-card" id="qa-inbox">
+  <div class="pc-header">
+    <div>
+      <div class="pc-route">/dashboard/qa</div>
+      <div class="pc-title">Q&A Inbox</div>
+      <div class="pc-badges"><span class="badge b-both">Next.js + Laravel</span></div>
+    </div>
+    <div class="pc-meta-right"><div class="pc-phase-tag" style="background:rgba(200,75,49,.1);color:var(--p1)">Phase 1</div></div>
+  </div>
+  <div class="pc-body">
+    <div class="design-block">
+      <h4>Visual Direction</h4>
+      <p><strong>Email inbox metaphor.</strong> Two-panel: left panel — question list (like Gmail left), right panel — question thread detail. Unanswered questions: bold text, blue dot. Answered: normal weight, no dot.</p>
+      <p><strong>Left panel per item:</strong> Student avatar (small), student name, lesson name (smaller, grey), question preview (truncated 80 chars), timestamp (relative). Hover background lightens.</p>
+      <p><strong>Right panel:</strong> Full question with lesson context. "From Lesson: [2.3 Risk Management]" link. Reply textarea below. Submit = POST answer. Auto-assign to TA button. Mark resolved button.</p>
+    </div>
+    <div class="comp-block">
+      <h4>Quick Reply Features</h4>
+      <ul>
+        <li>"Answer with AI ✨" → streams Claude answer into reply textarea</li>
+        <li>Saved replies: frequent answers stored as templates</li>
+        <li>Assign to TA: dropdown with TA names</li>
+        <li>Filter: All / Unanswered / Answered / My Course</li>
+        <li>Sort: newest / most votes / oldest</li>
+        <li>Keyboard shortcut: R to reply, E to expand, M to mark resolved</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- REVIEWS -->
+<div class="page-card" id="reviews">
+  <div class="pc-header">
+    <div>
+      <div class="pc-route">/dashboard/reviews</div>
+      <div class="pc-title">Reviews Management</div>
+      <div class="pc-badges"><span class="badge b-both">Next.js + Laravel</span></div>
+    </div>
+    <div class="pc-meta-right"><div class="pc-phase-tag" style="background:rgba(200,75,49,.1);color:var(--p1)">Phase 1</div></div>
+  </div>
+  <div class="pc-body">
+    <div class="design-block">
+      <h4>Visual Direction</h4>
+      <p><strong>Stats sidebar + review list.</strong> Left 280px: per-course average rating (5-star visual), distribution bar chart (5★ → 1★ horizontal bars), total count. Right: review cards. Each card: stars (filled yellow), date, student name, review text, creator reply (if any, indented with border-left accent). Actions: Reply, Feature (📌), Hide.</p>
+      <p><strong>Featured reviews</strong> get gold border-left and "Featured" badge — these appear first on sales pages.</p>
+    </div>
+    <div class="comp-block">
+      <h4>Reply Flow</h4>
+      <ul>
+        <li>Click "Reply" → inline textarea expands below review</li>
+        <li>"Reply with AI ✨" → generates empathetic response, editable before submit</li>
+        <li>Character limit: 500 chars, counter shows remaining</li>
+        <li>Reply appears immediately (optimistic update)</li>
+        <li>Edit reply option (within 7 days)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS PAGE -->
+<div class="page-card" id="settings">
+  <div class="pc-header">
+    <div>
+      <div class="pc-route">/dashboard/settings/[tab]</div>
+      <div class="pc-title">Creator Settings — Tabbed</div>
+      <div class="pc-badges"><span class="badge b-both">Next.js + Laravel</span></div>
+    </div>
+    <div class="pc-meta-right"><div class="pc-phase-tag" style="background:rgba(200,75,49,.1);color:var(--p1)">Phase 1</div></div>
+  </div>
+  <div class="pc-body">
+    <div class="design-block">
+      <h4>Visual Direction</h4>
+      <p><strong>Left-tab layout.</strong> Sidebar (180px): tab list. Each tab = a distinct settings group. Selected tab: accent border-left. Content area: clean sections with heading + divider + form fields. Save button per section (not one giant save — prevents accidental overwrites).</p>
+      <p><strong>Tabs:</strong> Profile, Security, Payments (Razorpay / Stripe), Tax (GSTIN), Notifications, Team, Domain, Invoice, Webhooks, Billing, Danger Zone.</p>
+    </div>
+    <div class="comp-block">
+      <h4>Key Sections</h4>
+      <ul>
+        <li>Payment tab: Razorpay connect card (big, branded, shows connected status with account name)</li>
+        <li>Tax tab: GSTIN field with format validator + auto-detect state from GSTIN</li>
+        <li>Domain tab: shows CNAME record to add, verification status badge</li>
+        <li>Invoice tab: live preview iframe of PDF template</li>
+        <li>Danger Zone: red section at bottom — "Delete Account" (requires typing "DELETE" to confirm)</li>
+        <li>Notifications: toggle grid (email / WhatsApp per event type)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+</div><!-- /phase 1 pages grid -->
+<div class="section-div"></div>
+
+
+<!-- PHASE 2: WEBSITE BUILDER -->
+<div class="phase-hdr">
+  <div class="phase-pill" style="background:rgba(26,82,118,.1);color:var(--p2);border:1px solid rgba(26,82,118,.25)">◆ Phase 2 — Website Builder & Public Pages</div>
+  <h2>The <em>creator's storefront</em> — built to convert</h2>
+  <p>Two worlds: the builder (creator sees it) and the output (student sees it). Builder is editorial and precise. Public pages are warm, trust-building, India-optimised.</p>
+  <div class="phase-meta">Pages: <span>10</span> &nbsp;·&nbsp; Public pages are multi-tenant (each creator has their own theme)</div>
+</div>
+
+<div class="pages-grid">
+
+<!-- PAGE LIST -->
+<div class="page-card" id="page-list">
+  <div class="pc-header">
+    <div>
+      <div class="pc-route">/dashboard/website</div>
+      <div class="pc-title">Website Pages Manager</div>
+      <div class="pc-badges"><span class="badge b-both">Next.js + Laravel</span></div>
+    </div>
+    <div class="pc-meta-right"><div class="pc-phase-tag" style="background:rgba(26,82,118,.1);color:var(--p2)">Phase 2</div></div>
+  </div>
+  <div class="pc-body">
+    <div class="design-block">
+      <h4>Visual Direction</h4>
+      <p><strong>Thumbnail grid.</strong> Each page = card with small screenshot thumbnail (or placeholder mockup). Page type badge (Home / Sales / Landing / Blog). Status (Published/Draft). Last edited timestamp. "Edit", "View Live", "Duplicate" actions.</p>
+      <p><strong>Top row:</strong> Custom domain badge (shows current domain, "Connect domain" if not connected). Site preview button (opens creator's home in new tab).</p>
+    </div>
+    <div class="comp-block">
+      <h4>Page Types & Icons</h4>
+      <ul>
+        <li>🏠 Homepage — the front door</li>
+        <li>🛒 Course Sales Pages — auto-generated per course</li>
+        <li>📋 Landing Pages — for campaigns, lead capture</li>
+        <li>📝 Blog Posts — individual posts</li>
+        <li>👤 About Page — creator bio</li>
+        <li>📞 Contact Page</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE BUILDER -->
+<div class="page-card" id="page-builder">
+  <div class="pc-header">
+    <div>
+      <div class="pc-route">/dashboard/website/pages/[id]/edit</div>
+      <div class="pc-title">Visual Page Builder</div>
+      <div class="pc-badges"><span class="badge b-next">Next.js (client)</span></div>
+    </div>
+    <div class="pc-meta-right"><div class="pc-phase-tag" style="background:rgba(26,82,118,.1);color:var(--p2)">Phase 2</div></div>
+  </div>
+  <div class="pc-body">
+    <div class="design-block">
+      <h4>Visual Direction — Three-Panel Editor</h4>
+      <p><strong>Left 240px:</strong> Block library palette. Blocks grouped: Layout (Hero, Section, Columns), Content (Text, Image, Video, Features Grid), Conversion (Pricing, CTA, Countdown, Coupon), Trust (Testimonials, Reviews, Logos, Social Proof), India (Festive Banner, WhatsApp Button, UPI Badge). Each block = small illustrated thumbnail. Drag to canvas or click "+".</p>
+      <p><strong>Centre (canvas):</strong> Live page preview. Selected block: blue outline. Hover block: edit/duplicate/delete toolbar appears above. Blocks are actual React components — WYSIWYG. Scrollable. Top: device toggle (Desktop/Tablet/Mobile).</p>
+      <p><strong>Right 280px:</strong> Selected block's prop editor — generated from block schema. Each prop = appropriate input (text, colour, toggle, image upload, select). Live preview updates as you type (debounced 200ms).</p>
+    </div>
+    <div class="layout-block">
+      <h4>Top Toolbar</h4>
+      <div class="sketch">🖥 Tablet Mobile  |  ← → History  |  Preview  |  [Save Draft]  [Publish]
+─────────────────────────────────────────────────────────────────────
+Page title: [Trading Masterclass Sales Page          ]  ● Published</div>
+    </div>
+    <div class="comp-block">
+      <h4>Builder UX Details</h4>
+      <ul>
+        <li>Undo/Redo: Ctrl+Z / Ctrl+Y (history of 30 states)</li>
+        <li>Block reorder: drag handle left of each block</li>
+        <li>"Add block here" — hover between blocks shows + divider line</li>
+        <li>Section divider: thin 1px line between blocks in editor (not visible to visitors)</li>
+        <li>AI copy button on Text blocks: "✨ Generate copy" → Claude fills in with course-specific text</li>
+        <li>Keyboard shortcut: Del to delete selected block, Escape to deselect</li>
+      </ul>
+    </div>
+    <div class="visual-block">
+      <h4>Publish Flow</h4>
+      <p>Green "Publish" button top-right. Click → brief loading (ISR revalidation call to Next.js) → "Page is live! View →" toast with live URL. If user has custom domain: shows custom domain URL. Copy link button. Share to social quick buttons.</p>
+    </div>
+  </div>
+</div>
+
+<!-- BLOG EDITOR -->
+<div class="page-card" id="blog-editor">
+  <div class="pc-header">
+    <div>
+      <div class="pc-route">/dashboard/blog/[id]/edit</div>
+      <div class="pc-title">Blog Post Editor</div>
+      <div class="pc-badges"><span class="badge b-both">Next.js (TipTap) + Laravel</span></div>
+    </div>
+    <div class="pc-meta-right"><div class="pc-phase-tag" style="background:rgba(26,82,118,.1);color:var(--p2)">Phase 2</div></div>
+  </div>
+  <div class="pc-body">
+    <div class="design-block">
+      <h4>Visual Direction</h4>
+      <p><strong>Distraction-free writing mode.</strong> Narrow centred column (720px max), lots of white space. Like Medium editor. Title: very large (2.5rem), no border. Below title: meta bar (category, tags, featured image, publish date). Then: full TipTap editor.</p>
+      <p><strong>Top toolbar:</strong> minimal — just Format menu + Image + AI + Publish. Collapses on scroll (100px down). Bottom word count + reading time.</p>
+      <p>Right sidebar (collapsible): SEO score, meta title/description fields, URL slug, featured image preview.</p>
+    </div>
+    <div class="comp-block">
+      <h4>AI Integration</h4>
+      <ul>
+        <li>"Generate Post ✨" button → opens AI drawer: topic + keywords input → streams full post</li>
+        <li>Select text → "Improve with AI" context menu option</li>
+        <li>Auto-suggest meta description from post content</li>
+        <li>SEO score: live readability + keyword density indicator</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- THEME EDITOR -->
+<div class="page-card" id="theme-editor">
+  <div class="pc-header">
+    <div>
+      <div class="pc-route">/dashboard/website/design</div>
+      <div class="pc-title">Site Theme & Design Editor</div>
+      <div class="pc-badges"><span class="badge b-both">Next.js + Laravel</span></div>
+    </div>
+    <div class="pc-meta-right"><div class="pc-phase-tag" style="background:rgba(26,82,118,.1);color:var(--p2)">Phase 2</div></div>
+  </div>
+  <div class="pc-body">
+    <div class="design-block">
+      <h4>Visual Direction</h4>
+      <p><strong>Live preview + controls.</strong> Left (300px): all theme controls. Right: live iframe preview of creator's homepage updating in real-time as theme changes.</p>
+      <p>Controls: Primary Colour (colour picker with hex input), Secondary Colour, Font Family (dropdown of 12 curated Google Fonts, each shown in their own typeface), Logo upload (shows in preview), Favicon upload, Header style (transparent/solid/gradient).</p>
+      <p><strong>Font preview:</strong> Each font option shows: "Trading Excellence" in that font. Selecting immediately updates live preview.</p>
+    </div>
+    <div class="comp-block">
+      <h4>Preset Themes</h4>
+      <ul>
+        <li>Finance Pro (navy + gold, Times New Roman feel)</li>
+        <li>Tech Modern (dark + electric blue, Syne font)</li>
+        <li>Wellness (sage green + warm beige, Cormorant)</li>
+        <li>Bold Creator (black + hot coral, Playfair Display)</li>
+        <li>Minimal Light (pure white + black, Libre Baskerville)</li>
+        <li>India Vibrant (saffron + deep red, Hind Madurai)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- PUBLIC CREATOR HOME -->
+<div class="page-card" id="public-home">
+  <div class="pc-header">
+    <div>
+      <div class="pc-route">[creator].platform.com or custom-domain.com</div>
+      <div class="pc-title">Public Creator Homepage</div>
+      <div class="pc-badges"><span class="badge b-public">Public (Next.js ISR)</span></div>
+    </div>
+    <div class="pc-meta-right"><div class="pc-phase-tag" style="background:rgba(26,82,118,.1);color:var(--p2)">Phase 2</div></div>
+  </div>
+  <div class="pc-body">
+    <div class="design-block">
+      <h4>Visual Direction</h4>
+      <p><strong>Creator-owned brand.</strong> This page uses the creator's theme (CSS variables injected server-side). Not a platform-branded page — it's the creator's school. Creator's logo top-left. Creator's colour as primary throughout.</p>
+      <p><strong>Hero section:</strong> Creator photo (professional, large), headline, sub-headline, course count + student count social proof stats. "Browse Courses" CTA.</p>
+      <p><strong>Courses grid:</strong> Cards with thumbnail, title, student count, price, rating stars. Filter by category. Mobile: single column, full-width cards.</p>
+      <p><strong>About section:</strong> Creator bio, social links (YouTube, Instagram, Twitter), credentials badges.</p>
+    </div>
+    <div class="comp-block">
+      <h4>India-Specific Elements</h4>
+      <ul>
+        <li>UPI badge in corner: "Pay with UPI / GPay / PhonePe"</li>
+        <li>Hindi toggle (if creator has Hindi content)</li>
+        <li>WhatsApp float button (bottom-right): "Chat with me on WhatsApp"</li>
+        <li>Festive banner (Diwali season): auto-shows from festive campaign</li>
+        <li>Trust signals: Razorpay secure badge, GST invoice available note</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- COURSE SALES PAGE -->
+<div class="page-card" id="course-sales">
+  <div class="pc-header">
+    <div>
+      <div class="pc-route">[creator].platform.com/courses/[slug]</div>
+      <div class="pc-title">Course Sales Page</div>
+      <div class="pc-badges"><span class="badge b-public">Public (Next.js ISR)</span></div>
+    </div>
+    <div class="pc-meta-right"><div class="pc-phase-tag" style="background:rgba(26,82,118,.1);color:var(--p2)">Phase 2</div></div>
+  </div>
+  <div class="pc-body">
+    <div class="design-block">
+      <h4>Visual Direction</h4>
+      <p><strong>Long-form sales page.</strong> Classic structure optimised for Indian buyers: clear price at top (no buried pricing), GST inclusive note, EMI option, mobile payment methods. Blocks in order: Hero (title + subtitle + thumbnail + price + enrol CTA), Social Proof (students + rating + recent enrollers), What You'll Learn (benefits bullets), Curriculum Preview (accordion, first 3 lessons visible), Instructor Bio, Testimonials, Pricing Table, FAQ, Final CTA.</p>
+      <p><strong>Sticky CTA bar:</strong> Appears when main hero CTA scrolls out of view. Fixed bottom bar: course title (truncated) + price + "Enrol Now" button. Mobile: full-width, always visible.</p>
+    </div>
+    <div class="comp-block">
+      <h4>Social Proof Elements</h4>
+      <ul>
+        <li>Live enrolment counter: "1,247 students enrolled" (updates real-time via React Query 30s)</li>
+        <li>Recent enrolment toast: "Priya from Mumbai enrolled 2 hours ago" (rotates, live data)</li>
+        <li>Star rating breakdown (visual bar chart)</li>
+        <li>Countdown timer (if time-limited offer)</li>
+        <li>Coupon field: inline in pricing section (auto-applies from URL param)</li>
+      </ul>
+    </div>
+    <div class="visual-block">
+      <h4>Mobile Optimisation</h4>
+      <p><strong>Critical for India:</strong> 80% of buyers on mobile. Sticky bottom CTA always visible. Curriculum accordion touch-friendly (min 48px tap targets). Price in INR always large and visible. "Pay with GPay" quick button (opens intent directly on Android).</p>
+    </div>
+  </div>
+</div>
+
+<!-- CHECKOUT -->
+<div class="page-card" id="checkout-page">
+  <div class="pc-header">
+    <div>
+      <div class="pc-route">[creator].platform.com/checkout/[courseId]</div>
+      <div class="pc-title">Checkout Page</div>
+      <div class="pc-badges"><span class="badge b-public">Public — High conversion priority</span></div>
+    </div>
+    <div class="pc-meta-right"><div class="pc-phase-tag" style="background:rgba(26,82,118,.1);color:var(--p2)">Phase 2</div></div>
+  </div>
+  <div class="pc-body">
+    <div class="design-block">
+      <h4>Visual Direction — Conversion-First</h4>
+      <p><strong>Two-column: form left, order summary right.</strong> Left (60%): Student info (name, email, phone), WhatsApp opt-in section (with clear consent copy in simple Hindi/English), coupon code field, B2B GST toggle. Right (40%): Course thumbnail + title + price breakdown (base + GST) + total. Sticky on scroll.</p>
+      <p><strong>Trust bar below form:</strong> Razorpay secure logo, "100% secure payment", refund policy link, GST invoice included note.</p>
+      <p><strong>Pay button:</strong> Full width, creator's primary colour, large (54px height). Payment methods shown as small icons below button (UPI, Cards, EMI, Wallets).</p>
+    </div>
+    <div class="comp-block">
+      <h4>Coupon UX</h4>
+      <ul>
+        <li>Field with "Apply" button — inline validation (green checkmark or red X)</li>
+        <li>Valid: price line-through + discounted price animates in (count-down number)</li>
+        <li>Invalid: shake animation + error message (rate limited, can't brute force)</li>
+        <li>Auto-apply from URL: ?coupon=DIWALI20 → pre-fills and validates</li>
+        <li>Savings badge: "You save ₹600!" green pill above total</li>
+      </ul>
+    </div>
+    <div class="visual-block">
+      <h4>Razorpay Modal Design</h4>
+      <p>Platform injects creator's primary colour as Razorpay theme colour. Prefills email and phone from form. On mobile: full-screen Razorpay modal. GPay button prominently first on Android Chrome.</p>
+      <p>After payment: spinner → success checkmark → smooth redirect to /thankyou (no new page load — React transition).</p>
+    </div>
+  </div>
+</div>
+
+<!-- THANK YOU PAGE -->
+<div class="page-card" id="thankyou-page">
+  <div class="pc-header">
+    <div>
+      <div class="pc-route">[creator].platform.com/thankyou?payment_id=...</div>
+      <div class="pc-title">Thank-You & Upsell Page</div>
+      <div class="pc-badges"><span class="badge b-public">Post-purchase</span></div>
+    </div>
+    <div class="pc-meta-right"><div class="pc-phase-tag" style="background:rgba(26,82,118,.1);color:var(--p2)">Phase 2</div></div>
+  </div>
+  <div class="pc-body">
+    <div class="design-block">
+      <h4>Visual Direction</h4>
+      <p><strong>Celebration moment.</strong> Confetti burst on load (canvas-confetti, 2.5s, brand colours). Large "Welcome to [Course Name]! 🎉" heading. Enrolled confirmation card: course thumbnail, "You're In" badge, start learning button.</p>
+      <p>Below: Invoice download button (generates PDF inline). WhatsApp confirmation note: "We'll send updates to your WhatsApp". Login credentials (if new account created).</p>
+      <p><strong>Upsell section</strong> (if configured): separator line → "Before you start — a special offer for you:" → upsell product card with large discount + 10-minute countdown timer. "No thanks, start learning →" below in small muted text.</p>
+    </div>
+    <div class="comp-block">
+      <h4>Next Steps Section</h4>
+      <ul>
+        <li>"Start Learning" — primary CTA, links to first lesson</li>
+        <li>"Download Invoice" — PDF with GST breakdown</li>
+        <li>"Join our WhatsApp group" — if configured, direct link</li>
+        <li>"Share your enrolment" — WhatsApp share template pre-filled</li>
+        <li>Creator's social media links</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- PUBLIC BLOG -->
+<div class="page-card" id="public-blog">
+  <div class="pc-header">
+    <div>
+      <div class="pc-route">[creator].platform.com/blog</div>
+      <div class="pc-title">Public Blog (Index + Post)</div>
+      <div class="pc-badges"><span class="badge b-public">Public (ISR)</span></div>
+    </div>
+    <div class="pc-meta-right"><div class="pc-phase-tag" style="background:rgba(26,82,118,.1);color:var(--p2)">Phase 2</div></div>
+  </div>
+  <div class="pc-body">
+    <div class="design-block">
+      <h4>Blog Index Visual Direction</h4>
+      <p><strong>Editorial magazine layout.</strong> Hero post: large featured image (full-width, 560px height), overlay title. Below: 3-column grid of post cards (thumbnail + category badge + title + reading time + date).</p>
+      <p>Creator headshot in sidebar: "Written by Rohan Verma — Stock Market Educator". Category filter pills. Search bar.</p>
+    </div>
+    <div class="design-block">
+      <h4>Blog Post Visual Direction</h4>
+      <p>Reading-optimised. Max-width 720px centred. Font size 17px, line height 1.85. Author byline with headshot. Table of contents (sticky sidebar on desktop). Share bar: WhatsApp, Twitter, LinkedIn (India priority order). Related courses CTA at bottom: "Want to learn more? Check out [Course Name] →".</p>
+    </div>
+  </div>
+</div>
+
+</div><!-- /phase 2 grid -->
+<div class="section-div"></div>
+
+
+<!-- PHASE 3: STUDENT PORTAL -->
+<div class="phase-hdr">
+  <div class="phase-pill" style="background:rgba(30,132,73,.1);color:var(--p3);border:1px solid rgba(30,132,73,.25)">◆ Phase 3 — Student Learning Portal</div>
+  <h2>The <em>learning experience</em> — where knowledge transfers</h2>
+  <p>Design for focus and momentum. Every interaction should help students complete more. Warm, encouraging, never sterile. Inspired by the best: Duolingo's streaks, Netflix's autoplay, Notion's notes.</p>
+  <div class="phase-meta">Pages: <span>8</span> &nbsp;·&nbsp; Mobile: <span>first-class, Redmi 9A tested</span></div>
+</div>
+
+<div class="pages-grid">
+
+<!-- STUDENT HOME -->
+<div class="page-card" id="student-home">
+  <div class="pc-header">
+    <div>
+      <div class="pc-route">/student/dashboard</div>
+      <div class="pc-title">Student Home — Enrolled Courses</div>
+      <div class="pc-badges"><span class="badge b-both">Next.js + Laravel</span></div>
+    </div>
+    <div class="pc-meta-right"><div class="pc-phase-tag" style="background:rgba(30,132,73,.1);color:var(--p3)">Phase 3</div></div>
+  </div>
+  <div class="pc-body">
+    <div class="design-block">
+      <h4>Visual Direction</h4>
+      <p><strong>Warm, motivating.</strong> Background: off-white (#faf8f4). Top greeting: "Good morning, Priya 🌤" (time-based). Streak indicator: "🔥 7 day streak — Keep it up!" (Duolingo-inspired, amber flame, animation on new streak).</p>
+      <p><strong>Continue Learning card:</strong> Prominent at top. Last-accessed course. Big thumbnail, progress ring (SVG, green fill), "Continue → Lesson 5: RSI Strategy" with lesson thumbnail. One big action — reduce friction.</p>
+      <p><strong>All courses grid:</strong> Below. Card per course: thumbnail, progress ring, title, creator name, completion % text. Completed courses: green checkmark overlay. Sort: last accessed first.</p>
+    </div>
+    <div class="comp-block">
+      <h4>Motivational Elements</h4>
+      <ul>
+        <li>Streak counter (flame emoji, count, "longest: 14 days")</li>
+        <li>XP progress bar (level up every 500 XP, animated fill)</li>
+        <li>Upcoming live class banner (if any scheduled in next 7 days)</li>
+        <li>Unread announcements card (amber accent, dismissible)</li>
+        <li>"You're 2 lessons away from your certificate!" prompt when near completion</li>
+      </ul>
+    </div>
+    <div class="visual-block">
+      <h4>Empty State</h4>
+      <p>First-time student (no enrolments): illustrated character reading a book. "Your learning journey starts here. Browse courses by [creator name]." Single CTA. Warm, not clinical.</p>
+    </div>
+  </div>
+</div>
+
+<!-- COURSE PLAYER -->
+<div class="page-card" id="course-player">
+  <div class="pc-header">
+    <div>
+      <div class="pc-route">/student/learn/[courseId]/[lessonId]</div>
+      <div class="pc-title">Course Player — The Core Experience</div>
+      <div class="pc-badges"><span class="badge b-both">Next.js + Laravel</span></div>
+    </div>
+    <div class="pc-meta-right"><div class="pc-phase-tag" style="background:rgba(30,132,73,.1);color:var(--p3)">Phase 3</div></div>
+  </div>
+  <div class="pc-body">
+    <div class="design-block">
+      <h4>Visual Direction — The Most Important Page</h4>
+      <p><strong>Immersive, distraction-free.</strong> Dark background (#0f0e0c). Full-height layout. Left panel (280px): curriculum tree. Main area: video/content. No page chrome — no site nav, no footer. Just the lesson.</p>
+      <p><strong>Top bar:</strong> Back to dashboard ←, course title (truncated), progress % badge ("68% complete"), notes icon, AI doubt button. Very minimal — dark, low profile.</p>
+      <p><strong>Video area:</strong> Fills remaining width. Below video: lesson title (large, Fraunces), description, tabs (Overview | Notes | Q&A | Resources). On desktop: all visible. On mobile: tabbed.</p>
+    </div>
+    <div class="layout-block">
+      <h4>Desktop Layout</h4>
+      <div class="sketch">┌──────────────────────────────────────┐
+│ ← Course Title          68% ✎ 🤖  │ ← top bar (48px)
+├──────────────────────────────────────┤
+│ [Curriculum │ [   VIDEO PLAYER   ]  │
+│  sidebar   │                        │
+│  280px     │  Lesson Title          │
+│ ✓ 1.1      │  [Overview][Notes][Q&A]│
+│ ✓ 1.2      │  Content below tabs    │
+│ ▶ 1.3 ←   │                        │
+│ ○ 1.4      │                        │
+│ 🔒 1.5 Day7│  [← Prev] [Next →]    │
+│ ── M2 ──   │  [✓ Mark Complete]     │
+│ ○ 2.1      │                        │
+└──────────────────────────────────────┘</div>
+    </div>
+    <div class="comp-block">
+      <h4>Curriculum Tree Details</h4>
+      <ul>
+        <li>Completed lessons: green checkmark icon + slightly dimmed</li>
+        <li>Current lesson: highlighted with accent left-border</li>
+        <li>Locked (drip): lock icon + "Unlocks in 3 days" tooltip</li>
+        <li>Quiz lesson: 🎯 icon + "Graded" badge</li>
+        <li>Completion %: thin progress bar at bottom of sidebar</li>
+        <li>Mobile: sidebar becomes bottom drawer (50vh, draggable up)</li>
+      </ul>
+    </div>
+    <div class="visual-block">
+      <h4>Lesson Complete Moment</h4>
+      <p>At 90% video watched OR click "Mark Complete": button animates → checkmark → confetti burst (subtle, 1.5s). Progress ring in sidebar updates. If last lesson → modal: "🎓 Course Complete! Your certificate is being generated..." with loading state → then download button.</p>
+    </div>
+  </div>
+</div>
+
+<!-- QUIZ PLAYER -->
+<div class="page-card" id="quiz-player">
+  <div class="pc-header">
+    <div>
+      <div class="pc-route">/student/learn/[courseId]/quiz/[quizId]</div>
+      <div class="pc-title">Quiz Player</div>
+      <div class="pc-badges"><span class="badge b-next">Next.js (client)</span></div>
+    </div>
+    <div class="pc-meta-right"><div class="pc-phase-tag" style="background:rgba(30,132,73,.1);color:var(--p3)">Phase 3</div></div>
+  </div>
+  <div class="pc-body">
+    <div class="design-block">
+      <h4>Visual Direction</h4>
+      <p><strong>Focused test-taking interface.</strong> Full-screen modal over player. Question number indicator: "Question 3 of 8" with progress dots. Timer (if set): circular countdown clock top-right (amber → red as time reduces). Question text: large (20px), clear. Options: large touch targets (56px height), radio/checkbox. Selected: filled accent colour.</p>
+      <p>Navigation: "Previous" / "Next" / "Submit" (appears on last question). Submit → results screen.</p>
+    </div>
+    <div class="comp-block">
+      <h4>Results Screen</h4>
+      <ul>
+        <li>Score circle: large SVG ring, animated fill, number inside (e.g. "78%")</li>
+        <li>Pass: green, "Congratulations! You passed 🎉" + next lesson CTA</li>
+        <li>Fail: amber, "Almost there! You need 70% to pass" + "Review and retry"</li>
+        <li>Per-question review: correct answer highlighted green, wrong = red strikethrough</li>
+        <li>Explanation text per question (if creator configured)</li>
+        <li>XP gained: "+20 XP" floats up animation</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- COMMUNITY -->
+<div class="page-card" id="community">
+  <div class="pc-header">
+    <div>
+      <div class="pc-route">/student/community/[communityId]</div>
+      <div class="pc-title">Community Feed</div>
+      <div class="pc-badges"><span class="badge b-both">Next.js + Laravel</span></div>
+    </div>
+    <div class="pc-meta-right"><div class="pc-phase-tag" style="background:rgba(30,132,73,.1);color:var(--p3)">Phase 3</div></div>
+  </div>
+  <div class="pc-body">
+    <div class="design-block">
+      <h4>Visual Direction</h4>
+      <p><strong>Social feed layout.</strong> Left sidebar (240px): community navigation (Feed, Announcements, Leaderboard, My Group, Events). Main feed: single column, centred (680px max), post cards. Right sidebar (desktop): leaderboard top 5, upcoming live class, streak board.</p>
+      <p><strong>Post card:</strong> Author avatar + name + "Student" / "Creator" badge + timestamp. Content. Images: 1-4 grid layout. Reactions: 5 emoji buttons (👍 ❤️ 🔥 👏 💡) with count. Reply count. "Reply" expand button. Pinned posts: light amber background + 📌 icon.</p>
+      <p><strong>Create post box:</strong> Top of feed. Expandable textarea. Image attach. Submit button. Creator's posts stand out: accent border-left.</p>
+    </div>
+    <div class="comp-block">
+      <h4>Leaderboard Panel</h4>
+      <ul>
+        <li>Top 5 students: rank emoji (🥇🥈🥉4th 5th), avatar, name, XP</li>
+        <li>Current student's rank shown even if outside top 5</li>
+        <li>"Your rank: #28 — 340 XP behind #5"</li>
+        <li>Weekly reset countdown timer</li>
+        <li>Tapping a student → mini profile modal</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- STUDENT CERTIFICATES -->
+<div class="page-card" id="student-certs">
+  <div class="pc-header">
+    <div>
+      <div class="pc-route">/student/certificates</div>
+      <div class="pc-title">Certificates Collection</div>
+      <div class="pc-badges"><span class="badge b-next">Next.js</span></div>
+    </div>
+    <div class="pc-meta-right"><div class="pc-phase-tag" style="background:rgba(30,132,73,.1);color:var(--p3)">Phase 3</div></div>
+  </div>
+  <div class="pc-body">
+    <div class="design-block">
+      <h4>Visual Direction</h4>
+      <p><strong>Trophy case aesthetic.</strong> Grid of certificate cards. Each: preview thumbnail of actual certificate (small, with subtle 3D tilt on hover — CSS perspective). Course name, completion date, creator name.</p>
+      <p>Actions: "Download PDF" (loading → download), "Share on LinkedIn" (opens LinkedIn share with verify URL), "Verify" link (public verify page).</p>
+      <p><strong>Empty state:</strong> Dashed certificate outline with lock icon. "Complete a course to earn your first certificate →"</p>
+    </div>
+    <div class="visual-block">
+      <h4>Certificate Card Hover</h4>
+      <p>CSS 3D tilt effect (transform: perspective(400px) rotateY(10deg)). Card lifts 4px. Subtle glow. Actions appear below card. Download button: shows loading shimmer → file downloads. New certificate arrives: animation — card "floats down" into grid from top with golden glow.</p>
+    </div>
+  </div>
+</div>
+
+<!-- STUDENT PURCHASES -->
+<div class="page-card" id="student-purchases">
+  <div class="pc-header">
+    <div>
+      <div class="pc-route">/student/purchases</div>
+      <div class="pc-title">Purchase History & Billing</div>
+      <div class="pc-badges"><span class="badge b-both">Next.js + Laravel</span></div>
+    </div>
+    <div class="pc-meta-right"><div class="pc-phase-tag" style="background:rgba(30,132,73,.1);color:var(--p3)">Phase 3</div></div>
+  </div>
+  <div class="pc-body">
+    <div class="design-block">
+      <h4>Visual Direction</h4>
+      <p><strong>Clean, accountant-friendly.</strong> Table: Date, Course, Amount, GST, Method badge (UPI/Card/EMI), Status badge (green Paid / amber Pending / red Refunded), Invoice download icon.</p>
+      <p><strong>Active subscriptions section</strong> above table: shows recurring courses with renewal date, amount, "Cancel" link. Important for creators using subscription pricing.</p>
+      <p>No dark design here — students need to see their money clearly. Light background, clean typography.</p>
+    </div>
+    <div class="comp-block">
+      <h4>Invoice Download</h4>
+      <ul>
+        <li>PDF icon button → brief spinner → download</li>
+        <li>Invoice includes GST breakdown (important for B2B buyers claiming ITC)</li>
+        <li>"Request revised invoice" link (for B2B GSTIN additions)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+</div><!-- /phase 3 grid -->
+<div class="section-div"></div>
+
+<!-- PHASE 4: MARKETING & ANALYTICS -->
+<div class="phase-hdr">
+  <div class="phase-pill" style="background:rgba(108,52,131,.1);color:var(--p4);border:1px solid rgba(108,52,131,.25)">◆ Phase 4 — Marketing, Analytics & Growth</div>
+  <h2>Tools that <em>grow revenue</em> on autopilot</h2>
+  <p>Email campaigns, WhatsApp broadcasts, automation flows, analytics dashboards, and affiliate management. Design: data-rich, actionable, no fluff.</p>
+  <div class="phase-meta">Pages: <span>12</span> &nbsp;·&nbsp; Key: <span>Email builder + React Flow automations + Recharts analytics</span></div>
+</div>
+
+<div class="pages-grid">
+
+<!-- EMAIL CAMPAIGNS LIST -->
+<div class="page-card" id="email-campaigns">
+  <div class="pc-header">
+    <div>
+      <div class="pc-route">/dashboard/email</div>
+      <div class="pc-title">Email Campaigns List</div>
+      <div class="pc-badges"><span class="badge b-both">Next.js + Laravel</span></div>
+    </div>
+    <div class="pc-meta-right"><div class="pc-phase-tag" style="background:rgba(108,52,131,.1);color:var(--p4)">Phase 4</div></div>
+  </div>
+  <div class="pc-body">
+    <div class="design-block">
+      <h4>Visual Direction</h4>
+      <p><strong>Mailchimp-inspired but simpler.</strong> Tabs: Campaigns | Automations | Templates. Each campaign: card or table row showing name, status badge (Draft/Scheduled/Sending/Sent), sent count, open rate (green if good, amber if low, red if bad vs industry average), click rate. "Create Campaign" button top-right (accent colour).</p>
+      <p><strong>Stats benchmarks:</strong> Open rate badge shows contextual colour: green = above 20%, amber = 10–20%, red = below 10%. Indian email benchmark is 18–22% — helps creators understand performance.</p>
+    </div>
+    <div class="comp-block">
+      <h4>Campaign Card Info</h4>
+      <ul>
+        <li>Subject line preview (truncated)</li>
+        <li>Audience size: "Sent to 1,240 contacts"</li>
+        <li>Scheduled: "Sends on Nov 12, 10:00 AM IST"</li>
+        <li>Sending: progress bar with % and ETA</li>
+        <li>Sent: date + "Open: 24% · Click: 8%"</li>
+        <li>A/B badge if test was run</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- EMAIL BUILDER -->
+<div class="page-card" id="email-builder">
+  <div class="pc-header">
+    <div>
+      <div class="pc-route">/dashboard/email/campaigns/[id]/edit</div>
+      <div class="pc-title">Email Drag-and-Drop Builder</div>
+      <div class="pc-badges"><span class="badge b-next">Next.js (client)</span></div>
+    </div>
+    <div class="pc-meta-right"><div class="pc-phase-tag" style="background:rgba(108,52,131,.1);color:var(--p4)">Phase 4</div></div>
+  </div>
+  <div class="pc-body">
+    <div class="design-block">
+      <h4>Visual Direction</h4>
+      <p><strong>Email canvas at 600px width</strong> (matches actual email client rendering). Left panel: block palette. Centre: email canvas on grey background (shows email as email clients do). Right panel: block properties.</p>
+      <p>Email canvas has "email chrome" — simulated email header bar at top (From, Subject, Preview text fields — all editable). This helps creator visualise exactly how it looks in inbox.</p>
+      <p>Blocks: Header (logo + nav), Hero Image, Text, Button, Divider, Spacer, Two-Column, Testimonial, Unsubscribe Footer (required, locks at bottom).</p>
+    </div>
+    <div class="comp-block">
+      <h4>Subject Line Tester</h4>
+      <ul>
+        <li>Subject line input: "Test with AI ✨" icon button</li>
+        <li>Score badge appears: 🟢8/10 with tooltip "Good length, clear CTA"</li>
+        <li>5 AI alternatives shown in dropdown, click to apply</li>
+        <li>Preview text field: character count, shows in inbox preview simulation</li>
+        <li>Inbox preview: shows how email looks in Gmail (desktop + mobile tabs)</li>
+      </ul>
+    </div>
+    <div class="layout-block">
+      <h4>Campaign Setup Flow</h4>
+      <div class="sketch">Step 1: Write email (builder)
+Step 2: Audience (contacts filter)
+         Who: All / Course students / Tags
+         Exclude: Unsubscribed (auto)
+Step 3: Schedule
+         [ Send now ] [ Schedule: date/time IST ]
+Step 4: Review → Send
+         Total: 1,240 contacts
+         Estimated delivery: ~45 min</div>
+    </div>
+  </div>
+</div>
+
+<!-- AUTOMATIONS -->
+<div class="page-card" id="automations">
+  <div class="pc-header">
+    <div>
+      <div class="pc-route">/dashboard/automations</div>
+      <div class="pc-title">Email Automation Flow Builder</div>
+      <div class="pc-badges"><span class="badge b-next">Next.js (React Flow)</span></div>
+    </div>
+    <div class="pc-meta-right"><div class="pc-phase-tag" style="background:rgba(108,52,131,.1);color:var(--p4)">Phase 4</div></div>
+  </div>
+  <div class="pc-body">
+    <div class="design-block">
+      <h4>Visual Direction</h4>
+      <p><strong>Node-based visual flow builder</strong> (React Flow). Canvas with infinite pan+zoom. Dark canvas background (#1a1917) with subtle dot-grid. Nodes connected by animated dashed lines (dots flow from trigger to next node — shows active automation feeling).</p>
+      <p><strong>Node types:</strong> Trigger (green, rounded square), Wait (blue, hourglass icon), Email (purple, envelope icon), Condition (amber, fork icon), End (grey circle). Each node: 240px wide, shows key info inside.</p>
+      <p>Right-click canvas → add node. Click node → properties in right panel. Delete: select + Delete key. Duplicate: Ctrl+D.</p>
+    </div>
+    <div class="visual-block">
+      <h4>Animated "Live" State</h4>
+      <p>When automation is active: lines between nodes show flowing dots animation (CSS stroke-dashoffset infinite loop). Trigger node: pulses softly. Active subscriber count badge on each node ("48 here"). Paused: animation stops, grey overlay on nodes.</p>
+    </div>
+    <div class="comp-block">
+      <h4>Pre-built Templates</h4>
+      <ul>
+        <li>Welcome Sequence (3 emails over 5 days)</li>
+        <li>Abandoned Cart (1h + 24h reminders)</li>
+        <li>Course Completion Celebration</li>
+        <li>Re-engagement (inactive 30 days)</li>
+        <li>Diwali Sale Sequence</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- CONTACTS -->
+<div class="page-card" id="contacts">
+  <div class="pc-header">
+    <div>
+      <div class="pc-route">/dashboard/contacts</div>
+      <div class="pc-title">Email Contacts / CRM</div>
+      <div class="pc-badges"><span class="badge b-both">Next.js + Laravel</span></div>
+    </div>
+    <div class="pc-meta-right"><div class="pc-phase-tag" style="background:rgba(108,52,131,.1);color:var(--p4)">Phase 4</div></div>
+  </div>
+  <div class="pc-body">
+    <div class="design-block">
+      <h4>Visual Direction</h4>
+      <p><strong>CRM-style table</strong> with powerful filtering. Columns: Avatar, Name, Email, Tags (colour badges), Source (badge: opt-in/checkout/import), Subscribed Date, Status (subscribed/unsubscribed/bounced), Last Opened.</p>
+      <p>Stats cards at top: Total Contacts, Active Subscribers, Unsubscribed count, Bounce rate.</p>
+      <p>Tags: colour-coded pills (creator creates tags with colour picker). Multi-tag per contact. Click tag to filter by it.</p>
+    </div>
+    <div class="comp-block">
+      <h4>Import & Management</h4>
+      <ul>
+        <li>CSV import: drag-drop file → column mapper (visual drag-drop to match columns)</li>
+        <li>Bulk tag: select contacts → "Add tag" dropdown</li>
+        <li>Segment builder: "Contacts who opened [Campaign] but didn't buy"</li>
+        <li>Export: selected contacts or all to CSV</li>
+        <li>Contact detail: click row → right drawer with full history</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- WHATSAPP DASHBOARD -->
+<div class="page-card" id="whatsapp">
+  <div class="pc-header">
+    <div>
+      <div class="pc-route">/dashboard/whatsapp</div>
+      <div class="pc-title">WhatsApp Campaigns & Stats</div>
+      <div class="pc-badges"><span class="badge b-both">Next.js + Laravel</span></div>
+    </div>
+    <div class="pc-meta-right"><div class="pc-phase-tag" style="background:rgba(108,52,131,.1);color:var(--p4)">Phase 4</div></div>
+  </div>
+  <div class="pc-body">
+    <div class="design-block">
+      <h4>Visual Direction</h4>
+      <p><strong>WhatsApp-branded but platform-designed.</strong> Green (#25D366) used sparingly — just for status badges and phone icon accents. Not the full WhatsApp green everywhere.</p>
+      <p>Campaign list: each row shows template name, audience, sent count, delivered %, read %. "Compose Broadcast" big button. Campaign stats: bar chart showing Sent / Delivered / Read — 3 bars per campaign.</p>
+      <p>WhatsApp number stats: daily send limit (250/day shown as progress bar — important for Meta compliance).</p>
+    </div>
+    <div class="comp-block">
+      <h4>Compose Flow</h4>
+      <ul>
+        <li>Select approved template from dropdown (fetched from Gupshup API)</li>
+        <li>Fill template parameters: dynamic fields highlighted in template preview</li>
+        <li>Audience: All opted-in / By course / By tag</li>
+        <li>Preview: WhatsApp message bubble mockup (exact as it will appear)</li>
+        <li>Schedule: send now or date/time</li>
+        <li>Warning if > 250 contacts (will send over multiple days)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ANALYTICS HOME -->
+<div class="page-card" id="analytics-home">
+  <div class="pc-header">
+    <div>
+      <div class="pc-route">/dashboard/analytics</div>
+      <div class="pc-title">Analytics — Revenue & Students</div>
+      <div class="pc-badges"><span class="badge b-both">Next.js (Recharts) + Laravel</span></div>
+    </div>
+    <div class="pc-meta-right"><div class="pc-phase-tag" style="background:rgba(108,52,131,.1);color:var(--p4)">Phase 4</div></div>
+  </div>
+  <div class="pc-body">
+    <div class="design-block">
+      <h4>Visual Direction</h4>
+      <p><strong>Dark, data-dense, Bloomberg-inspired.</strong> All Recharts on dark background. Revenue: large AreaChart (amber fill, 400px height, period selector). Below: side-by-side charts — Courses BarChart (revenue per course), Payment Methods PieChart (UPI 68%, Card 22%, EMI 10%).</p>
+      <p>Student row: new enrolments trend (LineChart), active vs inactive (stacked bar), state-wise map (India-specific — Recharts Treemap or custom).</p>
+      <p>UTM attribution table: "YouTube → ₹34,000 / Instagram → ₹12,000 / WhatsApp → ₹8,000" (rows with trend arrows).</p>
+    </div>
+    <div class="comp-block">
+      <h4>Chart Interactions</h4>
+      <ul>
+        <li>Period selector: 7d / 30d / 90d / Custom range (date picker)</li>
+        <li>Tooltip: hover shows formatted INR value + % change from previous period</li>
+        <li>Legend: click to show/hide data series</li>
+        <li>Export: "Download PNG" button per chart (html2canvas)</li>
+        <li>Comparison mode: overlay previous period (grey) + current (amber)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- COURSE ANALYTICS -->
+<div class="page-card" id="course-analytics">
+  <div class="pc-header">
+    <div>
+      <div class="pc-route">/dashboard/courses/[id]/analytics</div>
+      <div class="pc-title">Course Analytics — Drop-off & Completion</div>
+      <div class="pc-badges"><span class="badge b-both">Next.js + Laravel</span></div>
+    </div>
+    <div class="pc-meta-right"><div class="pc-phase-tag" style="background:rgba(108,52,131,.1);color:var(--p4)">Phase 4</div></div>
+  </div>
+  <div class="pc-body">
+    <div class="design-block">
+      <h4>Visual Direction</h4>
+      <p><strong>Drop-off funnel — most valuable insight.</strong> Horizontal bar chart: each lesson = one bar. Bar length = % of enrolled students who completed that lesson. Colour gradient: green → amber → red (higher completion = greener). Hover: shows exact count + percentage.</p>
+      <p>Below: key metrics cards — Completion Rate %, Average Progress %, Quiz Pass Rates table, Revenue from course.</p>
+      <p><strong>AI Insights card:</strong> "🤖 AI spotted 3 issues" — expandable accordion with each insight. e.g. "67% of students stop at Lesson 5 — this lesson is 45 minutes, consider splitting it."</p>
+    </div>
+    <div class="comp-block">
+      <h4>Actionable Callouts</h4>
+      <ul>
+        <li>Red lesson bars: "High drop-off" badge + "Edit this lesson" quick link</li>
+        <li>Low quiz pass rate: "Students struggle here — add explanation to Q3"</li>
+        <li>Student list: filter "Stuck at Lesson 5" → manual outreach to help them</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- AFFILIATES -->
+<div class="page-card" id="affiliates">
+  <div class="pc-header">
+    <div>
+      <div class="pc-route">/dashboard/affiliates</div>
+      <div class="pc-title">Affiliate Program Management</div>
+      <div class="pc-badges"><span class="badge b-both">Next.js + Laravel</span></div>
+    </div>
+    <div class="pc-meta-right"><div class="pc-phase-tag" style="background:rgba(108,52,131,.1);color:var(--p4)">Phase 4</div></div>
+  </div>
+  <div class="pc-body">
+    <div class="design-block">
+      <h4>Visual Direction</h4>
+      <p><strong>Partner management dashboard.</strong> Tabs: Affiliates | Commissions | Payouts. Top: stats row (Total affiliates, Active, Pending commissions ₹, Paid this month ₹).</p>
+      <p>Affiliates table: name, code, tier badge (🥉Bronze / 🥈Silver / 🥇Gold), clicks this month, conversions, commission rate, status. Row actions: edit commission, suspend, generate new link.</p>
+      <p>Pending approvals: amber banner if any affiliates waiting. "Approve All" quick action + individual review.</p>
+    </div>
+    <div class="comp-block">
+      <h4>Affiliate Portal (Public)</h4>
+      <ul>
+        <li>Separate layout: /affiliate/dashboard — warm light theme</li>
+        <li>My links: table with per-course links + copy button + QR code</li>
+        <li>Earnings: total + pending + paid, payout request button</li>
+        <li>Bank account: add bank for Razorpay Payouts (KYC guided)</li>
+        <li>Marketing assets: creator-uploaded banners + caption templates</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- COUPONS -->
+<div class="page-card" id="coupons">
+  <div class="pc-header">
+    <div>
+      <div class="pc-route">/dashboard/coupons</div>
+      <div class="pc-title">Coupon Manager</div>
+      <div class="pc-badges"><span class="badge b-both">Next.js + Laravel</span></div>
+    </div>
+    <div class="pc-meta-right"><div class="pc-phase-tag" style="background:rgba(108,52,131,.1);color:var(--p4)">Phase 4</div></div>
+  </div>
+  <div class="pc-body">
+    <div class="design-block">
+      <h4>Visual Direction</h4>
+      <p><strong>Simple but powerful.</strong> Table of coupons: Code (monospace font, easy to copy), Type badge (% or ₹), Discount value, Usage (34/100), Expiry, Status toggle (active/inactive). "Create Coupon" button — opens slide-over form.</p>
+      <p>Coupon code: monospace font (JetBrains Mono) with copy-to-clipboard button. India festive codes auto-suggested: DIWALI20, HOLI30, NEWYEAR25.</p>
+    </div>
+    <div class="comp-block">
+      <h4>Create Coupon Form</h4>
+      <ul>
+        <li>Code: input with "Generate random" button</li>
+        <li>Type: pill toggle "% Off" / "₹ Off"</li>
+        <li>Applicable to: All courses / Select courses (multi-select with course thumbnails)</li>
+        <li>Max uses: number input (blank = unlimited)</li>
+        <li>Valid period: date range picker</li>
+        <li>Preview: "Students pay ₹1,399 (was ₹1,999)" live calculation</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- LIVE CLASSES -->
+<div class="page-card" id="live-classes">
+  <div class="pc-header">
+    <div>
+      <div class="pc-route">/dashboard/live-classes</div>
+      <div class="pc-title">Live Classes Scheduler</div>
+      <div class="pc-badges"><span class="badge b-both">Next.js + Laravel</span></div>
+    </div>
+    <div class="pc-meta-right"><div class="pc-phase-tag" style="background:rgba(108,52,131,.1);color:var(--p4)">Phase 4</div></div>
+  </div>
+  <div class="pc-body">
+    <div class="design-block">
+      <h4>Visual Direction</h4>
+      <p><strong>Calendar + list hybrid.</strong> Top: monthly calendar (react-big-calendar) with event dots on days. Upcoming classes list below: each item shows class title, date+time (IST), course, platform badge (Zoom/Meet), attendee count, status (Upcoming / Live Now! / Ended). "Live Now" badge: red pulsing dot — urgent visual.</p>
+      <p>Create class: slide-over. DateTime picker with IST timezone clear. Auto-create Zoom meeting if connected. Send reminder toggle (2h + 15min).</p>
+    </div>
+    <div class="comp-block">
+      <h4>Student View (upcoming class)</h4>
+      <ul>
+        <li>Banner on student dashboard: "Live class in 2h 30m — [Title]"</li>
+        <li>Countdown timer in banner (live update)</li>
+        <li>"Add to Calendar" button (Google Calendar + iCal)</li>
+        <li>Join button: unlocks 15 min before start</li>
+        <li>Recording: available after class in lesson (auto-attached)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+</div><!-- /phase 4 grid -->
+<div class="section-div"></div>
+
+
+<!-- PHASE 5: AI TOOLS -->
+<div class="phase-hdr">
+  <div class="phase-pill" style="background:rgba(146,43,33,.1);color:var(--p5);border:1px solid rgba(146,43,33,.25)">◆ Phase 5 — AI Tools Hub</div>
+  <h2>Claude-powered <em>content generation</em> tools</h2>
+  <p>All AI via Laravel → Claude API. Streaming responses. The design must make AI feel like a creative partner, not a black box. Show the thinking. Show the output forming.</p>
+  <div class="phase-meta">Pages: <span>2</span> &nbsp;·&nbsp; Key effect: <span>Streaming text animation (token-by-token)</span></div>
+</div>
+
+<div class="pages-grid">
+
+<!-- AI TOOLS HUB -->
+<div class="page-card" id="ai-tools">
+  <div class="pc-header">
+    <div>
+      <div class="pc-route">/dashboard/ai</div>
+      <div class="pc-title">AI Tools Hub — All 12 AI Features</div>
+      <div class="pc-badges"><span class="badge b-both">Next.js + Laravel (Claude API)</span></div>
+    </div>
+    <div class="pc-meta-right"><div class="pc-phase-tag" style="background:rgba(146,43,33,.1);color:var(--p5)">Phase 5</div></div>
+  </div>
+  <div class="pc-body">
+    <div class="design-block">
+      <h4>Visual Direction — "The Workshop"</h4>
+      <p><strong>Tool cards grid.</strong> Each AI feature = a card with: gradient icon (unique gradient per tool), tool name, what it does (one line), "Generate →" button. 3-column grid, 12 cards. Background: very dark (#0a0907) with subtle noise texture. Cards: slightly lighter (#1a1714) with 1px warm border. Hover: card glows warmly, border brightens.</p>
+      <p><strong>Usage meter top-right:</strong> "AI Credits: 84/100 this month" — progress bar (amber, fills left to right). On hover: "Upgrade to Pro for unlimited AI". Pro plan: no meter shown.</p>
+      <p><strong>Each tool card has:</strong> Usage count (how many times used this month), "Last used: 2 days ago", and a "★ Favourite" toggle.</p>
+    </div>
+    <div class="layout-block">
+      <h4>AI Tool Workspace (right-panel slide-over)</h4>
+      <div class="sketch">┌─────────────────────────────────────┐
+│ ✨ Course Outline Generator      ✕ │
+├─────────────────────────────────────┤
+│ Topic: [Trading Psychology for...] │
+│ Audience: [Beginner retail investor]│
+│ Duration: [8] hours                │
+│ Language: [● English  ○ Hindi]     │
+├─────────────────────────────────────┤
+│ [Generate Outline →]               │
+│  ─────────────────────────────────  │
+│  Output:                           │
+│  Module 1: Mind over Markets       │
+│  · 1.1 The Psychology of FOMO  ▌   │
+│  (streaming token by token...)     │
+│  ─────────────────────────────────  │
+│  [Copy] [Import to Course] [Retry] │
+└─────────────────────────────────────┘</div>
+    </div>
+    <div class="comp-block">
+      <h4>Streaming UX Details</h4>
+      <ul>
+        <li>Output area: monospace-flavoured, comfortable reading width</li>
+        <li>Streaming cursor: blinking | character at text end while generating</li>
+        <li>Stop generation: "⬛ Stop" button appears while streaming</li>
+        <li>Done state: cursor disappears, action buttons appear below</li>
+        <li>Copy: copies plain text (strips HTML), toast "Copied!"</li>
+        <li>Import: "Import to Course" → select course dropdown → imports curriculum</li>
+      </ul>
+    </div>
+    <div class="visual-block">
+      <h4>The 12 Tool Cards</h4>
+      <p>Course Outline (🎯 orange), Sales Copy (📣 red), Quiz Generator (🎯 green), Email Writer (✉️ blue), Social Posts (📱 pink), Doubt Solver (💬 teal), Blog Post (📝 amber), Content Repurposer (♻️ green), Subject Line Tester (📊 purple), Hindi Translator (🌐 saffron), FAQ Generator (❓ slate), Pricing Advisor (💰 gold). Each icon uses a 3-stop gradient — no two the same.</p>
+    </div>
+  </div>
+</div>
+
+<!-- AI USAGE DASHBOARD -->
+<div class="page-card">
+  <div class="pc-header">
+    <div>
+      <div class="pc-route">/dashboard/ai/usage</div>
+      <div class="pc-title">AI Usage Analytics</div>
+      <div class="pc-badges"><span class="badge b-both">Next.js + Laravel</span></div>
+    </div>
+    <div class="pc-meta-right"><div class="pc-phase-tag" style="background:rgba(146,43,33,.1);color:var(--p5)">Phase 5</div></div>
+  </div>
+  <div class="pc-body">
+    <div class="design-block">
+      <h4>Visual Direction</h4>
+      <p><strong>Usage analytics + recent generations history.</strong> Top: credits used this month (big number, doughnut chart showing used/remaining). Per-feature breakdown table: calls count, tokens used, "Most used: Sales Copy (34 times)". </p>
+      <p>History section: last 20 AI generations. Each: tool name, input summary (truncated prompt), date, "View output" → expands or re-opens tool with same inputs. "Re-generate" button. Like a browser history for AI.</p>
+    </div>
+  </div>
+</div>
+
+</div><!-- /phase 5 AI grid -->
+<div class="section-div"></div>
+
+<!-- PHASE 6: MOBILE APP -->
+<div class="phase-hdr">
+  <div class="phase-pill" style="background:rgba(5,150,105,.1);color:#065f46;border:1px solid rgba(5,150,105,.25)">◆ Phase 6 — Mobile App (React Native Expo)</div>
+  <h2>Learning on the <em>go</em> — India's mobile-first users</h2>
+  <p>Designed for ₹8,000 Android phones on 3G networks. Every screen must load fast, feel native, work offline. Dark mode first (saves battery on AMOLED). Thumb-friendly tap targets everywhere.</p>
+  <div class="phase-meta">Screens: <span>8 key screens</span> &nbsp;·&nbsp; Tested on: <span>Redmi 9A, OnePlus Nord, Samsung Galaxy A series</span></div>
+</div>
+
+<div class="pages-grid">
+
+<!-- MOBILE HOME -->
+<div class="page-card" id="mobile-home">
+  <div class="pc-header">
+    <div>
+      <div class="pc-route">HomeScreen.tsx (Expo Router)</div>
+      <div class="pc-title">Mobile Home Screen</div>
+      <div class="pc-badges"><span class="badge b-mobile">React Native Expo</span></div>
+    </div>
+    <div class="pc-meta-right"><div class="pc-phase-tag" style="background:rgba(5,150,105,.1);color:#065f46">Phase 6</div></div>
+  </div>
+  <div class="pc-body">
+    <div class="design-block">
+      <h4>Visual Direction</h4>
+      <p><strong>Native feel, creator-branded.</strong> Status bar: transparent, extends behind. Top bar: creator's logo (from app config) centred, notification bell top-right. Background: creator's primary colour as gradient on hero area (top 200px), then dark #0f0e0c below.</p>
+      <p><strong>Hero card:</strong> "Continue Learning" — last accessed lesson. Full-width card: thumbnail, lesson title, course title, progress bar (thin, glowing creator brand colour). Large "Continue →" button.</p>
+      <p><strong>All courses:</strong> FlashList below. Each: horizontal card (thumbnail 80px left, title + creator + progress ring right). Swipe right on card → "Download" action. Swipe left → "Share" action.</p>
+    </div>
+    <div class="layout-block">
+      <h4>Mobile Layout</h4>
+      <div class="sketch">  [Creator Logo]        🔔
+  ──────────────────────────
+  Good morning, Priya 🌤
+  🔥 7 day streak
+  ┌─────────────────────────┐
+  │ [thumbnail] Continue    │
+  │  Lesson 5: RSI Strategy │
+  │  ████████░░░░ 62%       │
+  │           [Continue →]  │
+  └─────────────────────────┘
+  
+  My Courses
+  ┌──────────────────────────┐
+  │[img] Trading Master...   │
+  │      Rohan Verma  ◉68%  │
+  └──────────────────────────┘
+  
+  [Home] [Learn] [Community] [Profile]</div>
+    </div>
+    <div class="comp-block">
+      <h4>Bottom Navigation</h4>
+      <ul>
+        <li>Home (house icon), Learn (play icon), Community (people icon), Profile (person icon)</li>
+        <li>Tab bar: creator's accent colour for active tab</li>
+        <li>Haptic feedback on tab press (Haptics.impactAsync)</li>
+        <li>Safe area inset respected (iPhone notch + Android nav bar)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- MOBILE PLAYER -->
+<div class="page-card" id="mobile-player">
+  <div class="pc-header">
+    <div>
+      <div class="pc-route">PlayerScreen.tsx</div>
+      <div class="pc-title">Mobile Video Player</div>
+      <div class="pc-badges"><span class="badge b-mobile">React Native (expo-av)</span></div>
+    </div>
+    <div class="pc-meta-right"><div class="pc-phase-tag" style="background:rgba(5,150,105,.1);color:#065f46">Phase 6</div></div>
+  </div>
+  <div class="pc-body">
+    <div class="design-block">
+      <h4>Visual Direction</h4>
+      <p><strong>Landscape-first player.</strong> Portrait: video at top (16:9), lesson title below, lesson content/tabs below. Landscape: full-screen video, controls fade after 3s, tap to show controls.</p>
+      <p><strong>Controls overlay:</strong> Back 10s / Play-Pause / Forward 10s. Progress bar (scrubber). Speed indicator (tap to change). Fullscreen toggle. Watermark overlay (student email, rotating corners, semi-transparent). Download button top-right (if available).</p>
+      <p><strong>Below video (portrait):</strong> Lesson title, Prev/Next navigation, curriculum list (scrollable), Notes tab.</p>
+    </div>
+    <div class="comp-block">
+      <h4>Offline Download UX</h4>
+      <ul>
+        <li>Download icon on each lesson in curriculum list</li>
+        <li>Downloading: circular progress indicator replaces icon</li>
+        <li>Downloaded: cloud-check icon (filled), tap to delete</li>
+        <li>Offline mode banner: "Playing offline — no internet required"</li>
+        <li>Storage indicator in Profile: "Downloaded content: 2.3 GB"</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+</div><!-- /mobile grid -->
+<div class="section-div"></div>
+
+<!-- PLATFORM PAGES -->
+<div class="phase-hdr">
+  <div class="phase-pill" style="background:rgba(26,58,92,.1);color:var(--accent3);border:1px solid rgba(26,58,92,.25)">◆ Platform — Pricing & Admin</div>
+  <h2>The platform's own <em>marketing</em> and <em>administration</em></h2>
+</div>
+
+<div class="pages-grid">
+
+<!-- PRICING PAGE -->
+<div class="page-card" id="pricing-page">
+  <div class="pc-header">
+    <div>
+      <div class="pc-route">platform.com/pricing</div>
+      <div class="pc-title">Platform Pricing Page</div>
+      <div class="pc-badges"><span class="badge b-next">Next.js (static)</span></div>
+    </div>
+    <div class="pc-meta-right"><div class="pc-phase-tag" style="background:rgba(26,58,92,.1);color:var(--accent3)">Platform</div></div>
+  </div>
+  <div class="pc-body">
+    <div class="design-block">
+      <h4>Visual Direction</h4>
+      <p><strong>Bold, clear, India-optimised.</strong> Annual/Monthly toggle at top (annual = 20% off). 3 plan columns: Free (white, flat), Starter (cream, slight elevation), Pro (dark ink, gold accents — premium feel, "Most Popular" badge).</p>
+      <p>Each plan: big price (Fraunces display font), billing period, feature list (✓ / ✗ / "—" icons). CTA button per plan. Feature comparison: expandable "See all features" below cards (detailed comparison table).</p>
+      <p><strong>India-specific selling points</strong> prominent: "0% platform commission", "Your own Razorpay account", "GST invoice auto-generation", "WhatsApp updates", "Hindi support".</p>
+    </div>
+    <div class="comp-block">
+      <h4>Objection Handling Section</h4>
+      <ul>
+        <li>"vs Teachable" comparison row: price + commission fee difference</li>
+        <li>"vs Graphy" comparison: UX + features</li>
+        <li>ROI calculator: "At ₹2,000/course and 50 students/month, you earn ₹1,00,000. Our Pro plan costs ₹2,999 — that's 3% of your revenue." Interactive slider.</li>
+        <li>FAQ: 8 questions about payments, GST, data ownership</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div class="page-card" id="admin-panel">
+  <div class="pc-header">
+    <div>
+      <div class="pc-route">platform.com/admin</div>
+      <div class="pc-title">Platform Admin Panel</div>
+      <div class="pc-badges"><span class="badge b-both">Next.js + Laravel (admin only)</span></div>
+    </div>
+    <div class="pc-meta-right"><div class="pc-phase-tag" style="background:rgba(26,58,92,.1);color:var(--accent3)">Platform</div></div>
+  </div>
+  <div class="pc-body">
+    <div class="design-block">
+      <h4>Visual Direction</h4>
+      <p><strong>Operator dashboard.</strong> Austere, functional, no decoration. Dark grey background (#111). Left nav: Creators, Revenue, Health Scores, Feature Flags, Reports. All data tables — no marketing chrome. This is an internal tool.</p>
+      <p>Creator list: health score column (red/amber/green traffic light), MRR contribution, plan, last login. Click creator → impersonate (opens their dashboard as them, "Impersonating Rohan Verma — Exit" warning bar at top).</p>
+    </div>
+    <div class="comp-block">
+      <h4>Admin-Only Features</h4>
+      <ul>
+        <li>Platform MRR chart: total + by plan tier</li>
+        <li>Churn: list of creators who cancelled (with reason if provided)</li>
+        <li>Feature flags: toggle each flag with rollout % slider</li>
+        <li>Creator impersonation: full access with audit log</li>
+        <li>System health: queue depth, error rate, Redis memory — live</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+</div><!-- /platform pages -->
+
+<!-- DESIGN SYSTEM SUMMARY -->
+<div class="phase-hdr">
+  <div class="phase-pill" style="background:rgba(184,134,11,.1);color:var(--p0);border:1px solid rgba(184,134,11,.25)">◆ Design System Reference</div>
+  <h2>Shared <em>design tokens</em> across all pages</h2>
+</div>
+
+<div class="pages-grid">
+<div class="page-card">
+  <div class="pc-header"><div><div class="pc-title">Global Design Tokens & Conventions</div></div></div>
+  <div class="pc-body thirds">
+    <div class="design-block">
+      <h4>Typography Scale</h4>
+      <p><strong>Display:</strong> Fraunces (serif, variable) — used for hero headings, large numbers, emotional moments. Italic variant for warmth.</p>
+      <p><strong>Body:</strong> DM Sans — all interface text, labels, descriptions.</p>
+      <p><strong>Mono:</strong> JetBrains Mono — code, numbers, IDs, API keys, transaction IDs.</p>
+      <p>Scale: 10 / 11 / 12 / 13 / 14 / 16 / 18 / 20 / 24 / 30 / 36 / 48 / 64px. Line heights: 1.4 (compact UI) / 1.65 (body) / 1.85 (reading).</p>
+    </div>
+    <div class="design-block">
+      <h4>Colour System</h4>
+      <p><strong>Dark theme (Creator Dashboard):</strong> Background #0f0e0c, Surface #1a1917, Border rgba(255,255,255,0.08), Text #ececf1, Muted #6b6256.</p>
+      <p><strong>Light theme (Public pages):</strong> Background #faf8f4, Surface #f0ece3, Border #ddd8ce, Text #0f0e0c.</p>
+      <p><strong>Accents:</strong> Revenue/Success = Amber #b8860b, Error = Warm Red #c84b31, Info = Oxford Blue #1a3a5c, Growth = Forest #2d6a4f.</p>
+      <p><strong>India-specific:</strong> Saffron #FF9933 (festival banners), WhatsApp Green #25D366 (used sparingly).</p>
+    </div>
+    <div class="design-block">
+      <h4>Spacing & Radius</h4>
+      <p><strong>Spacing:</strong> 4px base unit. Common: 4, 8, 12, 16, 20, 24, 32, 40, 48, 64px. Cards: 24px padding. Sections: 40px gap. Page max-width: 1280px (creator dashboard) / 1100px (public pages) / 720px (blog/reading).</p>
+      <p><strong>Border radius:</strong> 3px (chips, badges), 4px (cards, inputs), 6px (large cards), 12px (modals), 16px (floating panels).</p>
+      <p><strong>Shadows:</strong> Minimal in dark theme. Light theme: 0 1px 3px rgba(0,0,0,0.08), hover: 0 4px 16px rgba(0,0,0,0.12).</p>
+    </div>
+    <div class="layout-block">
+      <h4>Status Badges (Consistent)</h4>
+      <div class="states" style="margin-top:.5rem">
+        <span class="state success">Published</span>
+        <span class="state">Draft</span>
+        <span class="state info">Processing</span>
+        <span class="state danger">Failed</span>
+        <span class="state">Archived</span>
+        <span class="state success">Active</span>
+        <span class="state danger">Expired</span>
+        <span class="state info">Pending</span>
+      </div>
+      <p style="margin-top:.75rem;font-size:11px;color:var(--muted)">Same badge component, same colours, everywhere in the platform. Consistency = cognitive load reduction.</p>
+    </div>
+    <div class="comp-block">
+      <h4>Interaction Patterns</h4>
+      <ul>
+        <li>Hover → 150ms transition on background/border</li>
+        <li>Click → scale(0.97) for 100ms (button press feel)</li>
+        <li>Page transition → 200ms fade + 8px upward slide</li>
+        <li>Toast → slide in from bottom-right, 3s auto-dismiss</li>
+        <li>Modal → backdrop fades in 150ms, modal scales from 0.95→1 200ms</li>
+        <li>Loading skeleton → pulse animation, warm grey (#e8e1d4) on cream</li>
+      </ul>
+    </div>
+    <div class="visual-block">
+      <h4>Mobile-First Rules</h4>
+      <p><strong>Tap targets:</strong> Minimum 44×44px everywhere. <strong>Font minimum:</strong> 13px on mobile (never smaller). <strong>Inputs:</strong> font-size 16px to prevent iOS zoom-in. <strong>Touch gestures:</strong> swipe-back always works (native feel). <strong>Offline states:</strong> Every page handles no-network gracefully — shows cached content with "offline" indicator.</p>
+    </div>
+  </div>
+</div>
+</div><!-- /design system -->
+
+<!-- PAGE COUNT SUMMARY TABLE -->
+<div class="phase-hdr" style="background:var(--cream)">
+  <h2>Complete Page Inventory — 68 Pages</h2>
+  <p>Every page accounted for across all phases and user types.</p>
+</div>
+<div style="padding:2rem 3rem">
+<table class="summary-table">
+  <thead>
+    <tr><th>Zone</th><th>Pages</th><th>Route Pattern</th><th>Stack</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Auth & Onboarding</td><td class="page-count">5</td><td>/ login / register / verify-email / forgot-password / onboarding</td><td>Next.js + Sanctum</td></tr>
+    <tr><td>Creator Dashboard</td><td class="page-count">12</td><td>/dashboard/[section]</td><td>Next.js + Laravel API</td></tr>
+    <tr><td>Course Builder</td><td class="page-count">6</td><td>/dashboard/courses/[id]/[tab]</td><td>Next.js + Laravel</td></tr>
+    <tr><td>Website Builder</td><td class="page-count">4</td><td>/dashboard/website/[page]</td><td>Next.js + Laravel</td></tr>
+    <tr><td>Public (Creator Site)</td><td class="page-count">6</td><td>[creator].platform.com/[...]</td><td>Next.js ISR</td></tr>
+    <tr><td>Checkout Flow</td><td class="page-count">3</td><td>/checkout / /thankyou / /redeem</td><td>Next.js + Laravel</td></tr>
+    <tr><td>Student Portal</td><td class="page-count">8</td><td>/student/[section]</td><td>Next.js + Laravel</td></tr>
+    <tr><td>Email Marketing</td><td class="page-count">5</td><td>/dashboard/email/[...]</td><td>Next.js + Laravel</td></tr>
+    <tr><td>Analytics</td><td class="page-count">3</td><td>/dashboard/analytics/[...]</td><td>Next.js + Recharts</td></tr>
+    <tr><td>Growth (Affiliates, Coupons, Live)</td><td class="page-count">4</td><td>/dashboard/[affiliates/coupons/live]</td><td>Next.js + Laravel</td></tr>
+    <tr><td>AI Tools</td><td class="page-count">2</td><td>/dashboard/ai/[...]</td><td>Next.js + Laravel (Claude)</td></tr>
+    <tr><td>Mobile App</td><td class="page-count">8</td><td>Expo Router screens</td><td>React Native</td></tr>
+    <tr><td>Platform Marketing</td><td class="page-count">2</td><td>platform.com/pricing + /admin</td><td>Next.js</td></tr>
+    <tr class="total-row"><td>TOTAL</td><td class="page-count">68</td><td colspan="2">Complete platform coverage</td></tr>
+  </tbody>
+</table>
+</div>
+
+</div><!-- /main -->
+</div><!-- /wrap -->
+</body>
+</html>

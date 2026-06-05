@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Creator Platform — Master Task List</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root {
+  --bg: #0d0d0d;
+  --surface: #161616;
+  --surface2: #1e1e1e;
+  --border: rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.14);
+  --text: #e8e8e8;
+  --muted: #777;
+  --muted2: #555;
+  --accent: #ff6b35;
+  --accent2: #4ade80;
+  --accent3: #60a5fa;
+  --accent4: #c084fc;
+  --accent5: #fbbf24;
+  --done: #4ade80;
+}
+
+body {
+  font-family: 'IBM Plex Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* TOP BAR */
+.topbar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border2);
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.topbar-left { display: flex; align-items: center; gap: 1rem; }
+.topbar-logo {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: .02em;
+}
+.topbar-title {
+  font-size: 13px;
+  color: var(--muted);
+}
+.topbar-stats { display: flex; gap: 1.5rem; }
+.tstat { text-align: right; }
+.tstat-n { font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 600; color: var(--text); }
+.tstat-l { font-size: 10px; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
+
+/* PROGRESS BAR */
+.progress-strip {
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+  padding: .75rem 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  overflow-x: auto;
+}
+.phase-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 11px;
+  white-space: nowrap;
+  cursor: default;
+}
+.phase-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+/* MAIN LAYOUT */
+.layout { display: flex; min-height: calc(100vh - 100px); }
+
+/* SIDEBAR */
+.sidebar {
+  width: 240px;
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1.5rem 0;
+  position: sticky;
+  top: 100px;
+  height: calc(100vh - 100px);
+  overflow-y: auto;
+}
+.sidebar-section {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--muted2);
+  padding: .5rem 1.25rem;
+  margin-top: 1rem;
+}
+.sidebar-section:first-child { margin-top: 0; }
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: .45rem 1.25rem;
+  font-size: 12px;
+  color: var(--muted);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: all .15s;
+}
+.sidebar-link:hover { color: var(--text); background: rgba(255,255,255,.04); }
+.sidebar-link.active { color: var(--accent); border-left-color: var(--accent); background: rgba(255,107,53,.06); }
+.sl-num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--muted2);
+  min-width: 20px;
+}
+
+/* CONTENT */
+.content { flex: 1; overflow: hidden; }
+
+/* PHASE HEADER */
+.phase-header {
+  padding: 2rem 2.5rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.phase-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 4px;
+  margin-bottom: .75rem;
+}
+.ph-p0 { background: rgba(251,191,36,.1); color: var(--accent5); border: 1px solid rgba(251,191,36,.2); }
+.ph-p1 { background: rgba(255,107,53,.1); color: var(--accent); border: 1px solid rgba(255,107,53,.2); }
+.ph-p2 { background: rgba(96,165,250,.1); color: var(--accent3); border: 1px solid rgba(96,165,250,.2); }
+.ph-p3 { background: rgba(74,222,128,.1); color: var(--accent2); border: 1px solid rgba(74,222,128,.2); }
+.ph-p4 { background: rgba(192,132,252,.1); color: var(--accent4); border: 1px solid rgba(192,132,252,.2); }
+.ph-p5 { background: rgba(251,191,36,.1); color: var(--accent5); border: 1px solid rgba(251,191,36,.2); }
+
+.phase-header h2 {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: .35rem;
+}
+.phase-header p {
+  font-size: 13px;
+  color: var(--muted);
+  font-weight: 300;
+  max-width: 600px;
+}
+.phase-meta {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: .75rem;
+  flex-wrap: wrap;
+}
+.pm-item {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+}
+.pm-item span { color: var(--text); }
+
+/* SECTION */
+.section { padding: 1.5rem 2.5rem; border-bottom: 1px solid var(--border); }
+.section-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 1rem;
+}
+.section-icon {
+  width: 28px; height: 28px;
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.section-title {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  color: var(--text);
+}
+.section-count {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--muted2);
+  margin-left: auto;
+}
+
+/* TASK TABLE */
+.task-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.task-table th {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--muted2);
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border2);
+}
+.task-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+.task-table tr:last-child td { border-bottom: none; }
+.task-table tr:hover td { background: rgba(255,255,255,.025); }
+
+.tid {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--muted2);
+  white-space: nowrap;
+}
+.task-name {
+  font-size: 13px;
+  color: var(--text);
+  font-weight: 400;
+}
+.task-detail {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+  font-weight: 300;
+}
+.task-type {
+  display: inline-block;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  padding: 2px 6px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+.tt-fe { background: rgba(96,165,250,.12); color: #93c5fd; }
+.tt-be { background: rgba(74,222,128,.12); color: #86efac; }
+.tt-db { background: rgba(251,191,36,.12); color: #fde68a; }
+.tt-ui { background: rgba(192,132,252,.12); color: #d8b4fe; }
+.tt-api { background: rgba(255,107,53,.12); color: #fdba74; }
+.tt-infra { background: rgba(248,113,113,.12); color: #fca5a5; }
+.tt-design { background: rgba(244,114,182,.12); color: #f9a8d4; }
+.tt-test { background: rgba(52,211,153,.12); color: #6ee7b7; }
+
+.prio-tag {
+  display: inline-block;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .05em;
+  padding: 2px 6px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+.pr-must { background: rgba(255,107,53,.12); color: #fdba74; }
+.pr-high { background: rgba(251,191,36,.12); color: #fde68a; }
+.pr-med { background: rgba(96,165,250,.12); color: #93c5fd; }
+.pr-nice { background: rgba(255,255,255,.06); color: var(--muted); }
+
+.est {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+/* DIVIDER */
+.group-divider {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--muted2);
+  padding: 10px 10px 6px;
+  background: rgba(255,255,255,.02);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.group-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* FOOTER SUMMARY */
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1px;
+  background: var(--border);
+  border-top: 1px solid var(--border2);
+}
+.summary-cell {
+  background: var(--surface);
+  padding: 1.5rem;
+}
+.sc-phase {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin-bottom: .5rem;
+}
+.sc-n {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--text);
+}
+.sc-sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+@media(max-width:768px){
+  .sidebar { display: none; }
+  .topbar-stats { display: none; }
+  .section { padding: 1.25rem 1rem; }
+  .phase-header { padding: 1.5rem 1rem 1rem; }
+  .task-table th:nth-child(3),
+  .task-table td:nth-child(3),
+  .task-table th:nth-child(5),
+  .task-table td:nth-child(5) { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="topbar-logo">CREATOR_PLATFORM</div>
+    <div class="topbar-title">/ Master Task List · Day 1 → Launch</div>
+  </div>
+  <div class="topbar-stats">
+    <div class="tstat">
+      <div class="tstat-n">285</div>
+      <div class="tstat-l">Total tasks</div>
+    </div>
+    <div class="tstat">
+      <div class="tstat-n">6</div>
+      <div class="tstat-l">Phases</div>
+    </div>
+    <div class="tstat">
+      <div class="tstat-n">~36</div>
+      <div class="tstat-l">Weeks to launch</div>
+    </div>
+  </div>
+</div>
+
+<!-- PHASE STRIP -->
+<div class="progress-strip">
+  <div class="phase-pill"><span class="phase-dot" style="background:var(--accent5)"></span>Phase 0: Setup (Wk 1–2)</div>
+  <div class="phase-pill"><span class="phase-dot" style="background:var(--accent)"></span>Phase 1: Foundation (Wk 3–10)</div>
+  <div class="phase-pill"><span class="phase-dot" style="background:var(--accent3)"></span>Phase 2: Core Product (Wk 11–20)</div>
+  <div class="phase-pill"><span class="phase-dot" style="background:var(--accent2)"></span>Phase 3: Growth (Wk 21–28)</div>
+  <div class="phase-pill"><span class="phase-dot" style="background:var(--accent4)"></span>Phase 4: AI Layer (Wk 29–33)</div>
+  <div class="phase-pill"><span class="phase-dot" style="background:#f87171)"></span>Phase 5: Launch (Wk 34–36)</div>
+</div>
+
+<div class="layout">
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-section">Phase 0 · Setup</div>
+  <a href="#p0-arch" class="sidebar-link"><span class="sl-num">0.1</span>Architecture & Stack</a>
+  <a href="#p0-infra" class="sidebar-link"><span class="sl-num">0.2</span>Infra & DevOps</a>
+  <a href="#p0-design" class="sidebar-link"><span class="sl-num">0.3</span>Design System</a>
+
+  <div class="sidebar-section">Phase 1 · Foundation</div>
+  <a href="#p1-auth" class="sidebar-link"><span class="sl-num">1.1</span>Auth & Accounts</a>
+  <a href="#p1-db" class="sidebar-link"><span class="sl-num">1.2</span>Database Schema</a>
+  <a href="#p1-course" class="sidebar-link"><span class="sl-num">1.3</span>Course Builder</a>
+  <a href="#p1-video" class="sidebar-link"><span class="sl-num">1.4</span>Video Hosting</a>
+  <a href="#p1-website" class="sidebar-link"><span class="sl-num">1.5</span>Website Builder</a>
+  <a href="#p1-payment" class="sidebar-link"><span class="sl-num">1.6</span>Payments & GST</a>
+  <a href="#p1-student" class="sidebar-link"><span class="sl-num">1.7</span>Student Dashboard</a>
+  <a href="#p1-creator" class="sidebar-link"><span class="sl-num">1.8</span>Creator Dashboard</a>
+
+  <div class="sidebar-section">Phase 2 · Core Product</div>
+  <a href="#p2-community" class="sidebar-link"><span class="sl-num">2.1</span>Community & Live</a>
+  <a href="#p2-email" class="sidebar-link"><span class="sl-num">2.2</span>Email Marketing</a>
+  <a href="#p2-analytics" class="sidebar-link"><span class="sl-num">2.3</span>Analytics</a>
+  <a href="#p2-mobile" class="sidebar-link"><span class="sl-num">2.4</span>Mobile App</a>
+  <a href="#p2-whatsapp" class="sidebar-link"><span class="sl-num">2.5</span>WhatsApp Layer</a>
+
+  <div class="sidebar-section">Phase 3 · Growth</div>
+  <a href="#p3-marketing" class="sidebar-link"><span class="sl-num">3.1</span>Marketing Tools</a>
+  <a href="#p3-affiliate" class="sidebar-link"><span class="sl-num">3.2</span>Affiliate System</a>
+  <a href="#p3-monetise" class="sidebar-link"><span class="sl-num">3.3</span>Advanced Monetise</a>
+
+  <div class="sidebar-section">Phase 4 · AI Layer</div>
+  <a href="#p4-ai" class="sidebar-link"><span class="sl-num">4.1</span>AI Features</a>
+
+  <div class="sidebar-section">Phase 5 · Launch</div>
+  <a href="#p5-qa" class="sidebar-link"><span class="sl-num">5.1</span>QA & Testing</a>
+  <a href="#p5-launch" class="sidebar-link"><span class="sl-num">5.2</span>Launch & Go-Live</a>
+</nav>
+
+<!-- CONTENT -->
+<div class="content">
+
+<!-- ═══════════════════════════════════ PHASE 0 ═══ -->
+<div class="phase-header">
+  <div class="phase-tag ph-p0">◆ Phase 0 · Weeks 1–2</div>
+  <h2>Project Setup, Architecture & Design System</h2>
+  <p>Before writing one line of product code, set up the foundation that every future task depends on. Get this right and everything else is faster.</p>
+  <div class="phase-meta">
+    <div class="pm-item">Duration: <span>2 weeks</span></div>
+    <div class="pm-item">Tasks: <span>32</span></div>
+    <div class="pm-item">Team: <span>1 Dev + 1 Designer</span></div>
+    <div class="pm-item">Output: <span>Running repo, deployed skeleton, design tokens</span></div>
+  </div>
+</div>
+
+<!-- 0.1 Architecture -->
+<div class="section" id="p0-arch">
+  <div class="section-head">
+    <div class="section-icon" style="background:rgba(251,191,36,.12)">⚙️</div>
+    <div class="section-title">0.1 — Architecture & Tech Stack Decisions</div>
+    <div class="section-count">8 tasks</div>
+  </div>
+  <table class="task-table">
+    <thead><tr>
+      <th>ID</th><th style="min-width:220px">Task</th><th>Type</th><th>Priority</th><th>Est.</th>
+    </tr></thead>
+    <tbody>
+      <tr><td class="tid">T-001</td><td><div class="task-name">Define complete tech stack document</div><div class="task-detail">Next.js 14 (App Router) + Node.js + PostgreSQL + Prisma + Redis + S3 (Cloudflare R2). Write ADR (Architecture Decision Record) for every choice. Include why, trade-offs, alternatives rejected.</div></td><td><span class="task-type tt-infra">INFRA</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">4h</td></tr>
+      <tr><td class="tid">T-002</td><td><div class="task-name">Define multi-tenant architecture model</div><div class="task-detail">Decide: subdomain-per-creator (creator.platform.com) vs custom domain only vs both. Schema-per-tenant vs row-level isolation in shared DB. Document decision with migration path.</div></td><td><span class="task-type tt-infra">INFRA</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">6h</td></tr>
+      <tr><td class="tid">T-003</td><td><div class="task-name">Design full database entity relationship diagram</div><div class="task-detail">Map all entities: Creator, Student, Course, Module, Lesson, Enrolment, Payment, Invoice, Community, Post, Quiz, Certificate, Coupon, Affiliate, Email, Lead. Show all relationships and cardinality.</div></td><td><span class="task-type tt-db">DB</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-004</td><td><div class="task-name">Define API contract & versioning strategy</div><div class="task-detail">REST vs tRPC decision. API versioning (v1/). Auth headers (JWT Bearer). Rate limiting strategy. Error response format standard. Document with OpenAPI 3.0 spec file.</div></td><td><span class="task-type tt-api">API</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">6h</td></tr>
+      <tr><td class="tid">T-005</td><td><div class="task-name">Define file storage architecture</div><div class="task-detail">Video storage: Cloudflare R2 (cheap egress) or AWS S3. Video CDN: Cloudflare Stream or Mux. Image storage: R2 + Cloudflare Images for resize. Document upload size limits, allowed types, retention policy.</div></td><td><span class="task-type tt-infra">INFRA</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">4h</td></tr>
+      <tr><td class="tid">T-006</td><td><div class="task-name">Define email delivery stack</div><div class="task-detail">Transactional: Resend or AWS SES. Marketing broadcasts: Resend or self-hosted with Postal. Choose based on INR cost vs volume. Document sending domains, DKIM/SPF setup.</div></td><td><span class="task-type tt-infra">INFRA</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">2h</td></tr>
+      <tr><td class="tid">T-007</td><td><div class="task-name">Define background job queue architecture</div><div class="task-detail">Choose: BullMQ (Redis-backed) or pg-boss (Postgres-backed). Jobs needed: video transcoding webhook, email sends, certificate generation, invoice PDF creation, webhook dispatch, drip content unlock.</div></td><td><span class="task-type tt-infra">INFRA</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">3h</td></tr>
+      <tr><td class="tid">T-008</td><td><div class="task-name">Create project monorepo structure</div><div class="task-detail">Turborepo monorepo: apps/web (Next.js), apps/api (Node/Express), packages/db (Prisma), packages/ui (component library), packages/emails (React Email templates), packages/types (shared TypeScript types).</div></td><td><span class="task-type tt-infra">INFRA</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">4h</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 0.2 Infra -->
+<div class="section" id="p0-infra">
+  <div class="section-head">
+    <div class="section-icon" style="background:rgba(248,113,113,.12)">🖥️</div>
+    <div class="section-title">0.2 — Infrastructure & DevOps Setup</div>
+    <div class="section-count">14 tasks</div>
+  </div>
+  <table class="task-table">
+    <thead><tr><th>ID</th><th>Task</th><th>Type</th><th>Priority</th><th>Est.</th></tr></thead>
+    <tbody>
+      <tr><td class="tid">T-009</td><td><div class="task-name">Initialise GitHub repo with branch protection</div><div class="task-detail">main (production), staging, develop branches. Protect main: require PR + 1 review. Set up issue templates, PR templates, CODEOWNERS file.</div></td><td><span class="task-type tt-infra">INFRA</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1h</td></tr>
+      <tr><td class="tid">T-010</td><td><div class="task-name">Set up development environment with Docker Compose</div><div class="task-detail">docker-compose.yml with: PostgreSQL 16, Redis 7, MinIO (S3-compatible local). .env.example file with all variables documented. One-command dev startup: `docker compose up && pnpm dev`.</div></td><td><span class="task-type tt-infra">INFRA</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">4h</td></tr>
+      <tr><td class="tid">T-011</td><td><div class="task-name">Set up DigitalOcean / Hetzner production VPS</div><div class="task-detail">2 droplets: app server (4 vCPU, 8GB RAM) + DB server (2 vCPU, 4GB RAM, PostgreSQL). Set up SSH keys, disable password login, configure UFW firewall rules, install Nginx.</div></td><td><span class="task-type tt-infra">INFRA</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">6h</td></tr>
+      <tr><td class="tid">T-012</td><td><div class="task-name">Set up PostgreSQL with connection pooling</div><div class="task-detail">Install PgBouncer. Configure pg_hba.conf for security. Enable pg_stat_statements. Set up automated daily backup to Cloudflare R2. Test restore procedure.</div></td><td><span class="task-type tt-db">DB</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">4h</td></tr>
+      <tr><td class="tid">T-013</td><td><div class="task-name">Set up Redis for sessions & job queue</div><div class="task-detail">Redis 7 with AOF persistence. Configure maxmemory-policy allkeys-lru. Set up Redis Sentinel for HA (optional at MVP). Document key naming conventions.</div></td><td><span class="task-type tt-infra">INFRA</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">3h</td></tr>
+      <tr><td class="tid">T-014</td><td><div class="task-name">Set up Cloudflare R2 for file storage</div><div class="task-detail">Create R2 bucket. Configure CORS for upload. Set up public bucket for course thumbnails. Private bucket for video files. Generate API tokens with appropriate permissions.</div></td><td><span class="task-type tt-infra">INFRA</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">3h</td></tr>
+      <tr><td class="tid">T-015</td><td><div class="task-name">Set up Cloudflare Stream or Mux for video</div><div class="task-detail">Evaluate Mux vs Cloudflare Stream on INR cost per video minute. Set up account, webhooks for processing complete events. Test upload, transcode, playback pipeline end-to-end.</div></td><td><span class="task-type tt-infra">INFRA</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">6h</td></tr>
+      <tr><td class="tid">T-016</td><td><div class="task-name">Configure Nginx as reverse proxy with SSL</div><div class="task-detail">Nginx config for: main platform domain, wildcard subdomain (*.platform.com → creator routing), custom domain proxy pass. Let's Encrypt SSL via Certbot. Auto-renew cron.</div></td><td><span class="task-type tt-infra">INFRA</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">4h</td></tr>
+      <tr><td class="tid">T-017</td><td><div class="task-name">Set up CI/CD pipeline with GitHub Actions</div><div class="task-detail">On push to develop: run lint + type-check + tests → deploy to staging. On push to main: run all checks → deploy to production. Set up environment secrets in GitHub.</div></td><td><span class="task-type tt-infra">INFRA</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">6h</td></tr>
+      <tr><td class="tid">T-018</td><td><div class="task-name">Set up error monitoring with Sentry</div><div class="task-detail">Install Sentry SDK in Next.js and API. Configure source maps upload. Set up Slack alerts for new errors. Create separate Sentry projects for frontend and backend.</div></td><td><span class="task-type tt-infra">INFRA</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">3h</td></tr>
+      <tr><td class="tid">T-019</td><td><div class="task-name">Set up uptime monitoring</div><div class="task-detail">UptimeRobot or Better Uptime: monitor /api/health endpoint every 1 minute. Alert on Slack + SMS if down. Set up status page at status.platform.com.</div></td><td><span class="task-type tt-infra">INFRA</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">2h</td></tr>
+      <tr><td class="tid">T-020</td><td><div class="task-name">Configure environment variables management</div><div class="task-detail">Use Doppler or .env files per environment. Document every variable: name, purpose, example value, which service it belongs to. Never commit .env to git.</div></td><td><span class="task-type tt-infra">INFRA</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">2h</td></tr>
+      <tr><td class="tid">T-021</td><td><div class="task-name">Set up logging infrastructure</div><div class="task-detail">Structured JSON logging with Pino. Log to stdout in production. Ship to Loki or Logtail for search. Log every API request with user ID, duration, status code.</div></td><td><span class="task-type tt-infra">INFRA</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">3h</td></tr>
+      <tr><td class="tid">T-022</td><td><div class="task-name">Initialise Prisma ORM with base schema</div><div class="task-detail">prisma/schema.prisma with all models from ERD (T-003). Set up Prisma migrations workflow. Seed script for local dev (test creator, courses, students). Prisma Studio access.</div></td><td><span class="task-type tt-db">DB</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">6h</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 0.3 Design -->
+<div class="section" id="p0-design">
+  <div class="section-head">
+    <div class="section-icon" style="background:rgba(244,114,182,.12)">🎨</div>
+    <div class="section-title">0.3 — Design System & UI Foundation</div>
+    <div class="section-count">10 tasks</div>
+  </div>
+  <table class="task-table">
+    <thead><tr><th>ID</th><th>Task</th><th>Type</th><th>Priority</th><th>Est.</th></tr></thead>
+    <tbody>
+      <tr><td class="tid">T-023</td><td><div class="task-name">Create brand identity — logo, colors, typography</div><div class="task-detail">Design platform logo (SVG). Define primary, secondary, accent color palette. Choose 2 fonts (display + body). Create brand guidelines PDF. Dark + light mode color tokens.</div></td><td><span class="task-type tt-design">DESIGN</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">2d</td></tr>
+      <tr><td class="tid">T-024</td><td><div class="task-name">Set up Tailwind CSS with custom design tokens</div><div class="task-detail">tailwind.config.ts with all brand colors, spacing scale, border radius, shadow scale. Create CSS custom properties for all theme values. Dark mode via class strategy.</div></td><td><span class="task-type tt-ui">UI</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">4h</td></tr>
+      <tr><td class="tid">T-025</td><td><div class="task-name">Build base component library</div><div class="task-detail">Button (variants: primary, secondary, ghost, danger, sizes: sm/md/lg). Input, Textarea, Select, Checkbox, Radio, Toggle. Badge, Tag, Avatar, Spinner, Skeleton loader. Modal, Drawer, Tooltip, Dropdown.</div></td><td><span class="task-type tt-ui">UI</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">3d</td></tr>
+      <tr><td class="tid">T-026</td><td><div class="task-name">Design creator dashboard layout & navigation</div><div class="task-detail">Sidebar nav (collapsible on mobile). Top header with notifications + profile. Breadcrumb system. Page layout templates: full-width, sidebar+content, two-column. Empty states.</div></td><td><span class="task-type tt-design">DESIGN</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">2d</td></tr>
+      <tr><td class="tid">T-027</td><td><div class="task-name">Design student portal layout</div><div class="task-detail">Student-facing learning interface. Course player layout: sidebar (curriculum) + main (video/content) + notes panel. Mobile-first responsive. Separate from creator dashboard entirely.</div></td><td><span class="task-type tt-design">DESIGN</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">2d</td></tr>
+      <tr><td class="tid">T-028</td><td><div class="task-name">Design public website page templates</div><div class="task-detail">Wireframes for: homepage, course sales page, checkout page, thank-you page, blog index, blog post, about page, contact page. Mobile + desktop. Annotated with content zones.</div></td><td><span class="task-type tt-design">DESIGN</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">3d</td></tr>
+      <tr><td class="tid">T-029</td><td><div class="task-name">Create form component system</div><div class="task-detail">React Hook Form + Zod integration pattern. Form field wrapper with label, error, help text. File upload component with drag-and-drop + progress bar. Rich text editor (TipTap).</div></td><td><span class="task-type tt-ui">UI</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-030</td><td><div class="task-name">Build notification & toast system</div><div class="task-detail">Toast notifications (success/error/warning/info) with Sonner or Radix Toast. In-app notification bell with dropdown. Notification types: enrolment, payment, question, review, system.</div></td><td><span class="task-type tt-ui">UI</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">4h</td></tr>
+      <tr><td class="tid">T-031</td><td><div class="task-name">Set up Storybook for component documentation</div><div class="task-detail">Storybook 8 with all base components. Stories for each variant and state. Accessible color contrast checks. Deploy to internal URL for team reference.</div></td><td><span class="task-type tt-ui">UI</span></td><td><span class="prio-tag pr-med">MED</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-032</td><td><div class="task-name">Create React Email template base</div><div class="task-detail">packages/emails: base email layout (header with logo, body, footer with unsubscribe). Responsive HTML email CSS. Light/dark compatible. Template for: welcome, purchase, certificate, drip reminder.</div></td><td><span class="task-type tt-ui">UI</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════ PHASE 1 ═══ -->
+<div class="phase-header" id="phase1">
+  <div class="phase-tag ph-p1">◆ Phase 1 · Weeks 3–10</div>
+  <h2>Foundation — Auth, Courses, Payments, Website</h2>
+  <p>Build the absolute core: creators can sign up, build courses, receive payments in their own Razorpay, and have a live website. This is your MVP that early creators can use.</p>
+  <div class="phase-meta">
+    <div class="pm-item">Duration: <span>8 weeks</span></div>
+    <div class="pm-item">Tasks: <span>96</span></div>
+    <div class="pm-item">Milestone: <span>First creator live & earning</span></div>
+  </div>
+</div>
+
+<!-- 1.1 Auth -->
+<div class="section" id="p1-auth">
+  <div class="section-head">
+    <div class="section-icon" style="background:rgba(255,107,53,.12)">🔐</div>
+    <div class="section-title">1.1 — Authentication & Account Management</div>
+    <div class="section-count">14 tasks</div>
+  </div>
+  <table class="task-table">
+    <thead><tr><th>ID</th><th>Task</th><th>Type</th><th>Priority</th><th>Est.</th></tr></thead>
+    <tbody>
+      <tr><td class="tid">T-033</td><td><div class="task-name">Creator signup with email + password</div><div class="task-detail">Email verification flow. Bcrypt password hashing. JWT access token (15min) + refresh token (30d) in httpOnly cookie. Rate limit: 5 signup attempts per IP/hour.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">6h</td></tr>
+      <tr><td class="tid">T-034</td><td><div class="task-name">Creator login & session management</div><div class="task-detail">Login with email+password. Persistent session via refresh token. Remember me option (90d token). Logout (invalidate token in Redis). View all active sessions. Revoke specific session.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">4h</td></tr>
+      <tr><td class="tid">T-035</td><td><div class="task-name">Password reset flow</div><div class="task-detail">Forgot password → email with time-limited reset link (1h). Reset page with new password + confirm. Invalidate all sessions on password change. Confirmation email after reset.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">3h</td></tr>
+      <tr><td class="tid">T-036</td><td><div class="task-name">Google OAuth for creator signup/login</div><div class="task-detail">Google OAuth 2.0. Handle: new user (create account), existing user (link account), email conflict. Store Google profile photo. Smooth redirect back to dashboard after auth.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">4h</td></tr>
+      <tr><td class="tid">T-037</td><td><div class="task-name">Student signup & login (email OTP)</div><div class="task-detail">Students login with email + 6-digit OTP (no password friction). OTP valid 10 minutes. Auto-create account on first OTP verification. Rate limit OTP requests.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">4h</td></tr>
+      <tr><td class="tid">T-038</td><td><div class="task-name">Student login via WhatsApp OTP (India-first)</div><div class="task-detail">Twilio or Gupshup WhatsApp API. Send OTP via WhatsApp message. Student enters OTP on platform. Mobile number as primary identifier. +91 default country code.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">6h</td></tr>
+      <tr><td class="tid">T-039</td><td><div class="task-name">Creator profile setup (onboarding step 1)</div><div class="task-detail">After signup: collect name, display name (URL slug), bio (500 chars), profile photo upload, YouTube channel link (optional), Instagram handle (optional), phone number.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">4h</td></tr>
+      <tr><td class="tid">T-040</td><td><div class="task-name">Role-based access control (RBAC)</div><div class="task-detail">Roles: SUPER_ADMIN, CREATOR, TEACHING_ASSISTANT, STUDENT. Middleware: requireAuth(), requireRole(). Creator can only access their own data. TA limited to specific courses.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">4h</td></tr>
+      <tr><td class="tid">T-041</td><td><div class="task-name">Two-factor authentication (2FA) for creators</div><div class="task-detail">TOTP via Google Authenticator (otplib). QR code setup flow. Backup codes (10 codes, single use). Enforce 2FA option per creator. Recovery via backup code.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-med">MED</span></td><td class="est">6h</td></tr>
+      <tr><td class="tid">T-042</td><td><div class="task-name">Creator account settings page</div><div class="task-detail">Edit name, bio, photo, social links. Change email (verify new email). Change password. Delete account (GDPR). Export all data. Connected payment gateways section.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">6h</td></tr>
+      <tr><td class="tid">T-043</td><td><div class="task-name">Student account & profile page</div><div class="task-detail">Student-facing profile: name, photo, bio, enrolled courses list. Edit profile. Download certificates from here. Billing history. Delete account with data export.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">4h</td></tr>
+      <tr><td class="tid">T-044</td><td><div class="task-name">Teaching assistant (TA) invitation system</div><div class="task-detail">Creator invites TA via email. TA gets email with accept link. TA creates account (or links existing). Creator assigns TA to specific courses. Remove TA access.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">4h</td></tr>
+      <tr><td class="tid">T-045</td><td><div class="task-name">API rate limiting middleware</div><div class="task-detail">Global rate limit: 100 req/min per IP. Auth endpoints: 10 req/min. Upload endpoints: 5 req/min. Return 429 with Retry-After header. Redis-backed sliding window counter.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">3h</td></tr>
+      <tr><td class="tid">T-046</td><td><div class="task-name">Security hardening — headers, CSRF, input sanitisation</div><div class="task-detail">Helmet.js: HSTS, X-Frame-Options, Content-Security-Policy. CSRF tokens for all state-changing forms. DOMPurify for all user-generated HTML. SQL injection protection via Prisma parameterized queries. </div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">4h</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 1.2 DB Schema -->
+<div class="section" id="p1-db">
+  <div class="section-head">
+    <div class="section-icon" style="background:rgba(251,191,36,.12)">🗄️</div>
+    <div class="section-title">1.2 — Database Schema Implementation</div>
+    <div class="section-count">10 tasks</div>
+  </div>
+  <table class="task-table">
+    <thead><tr><th>ID</th><th>Task</th><th>Type</th><th>Priority</th><th>Est.</th></tr></thead>
+    <tbody>
+      <tr><td class="tid">T-047</td><td><div class="task-name">Creator & organisation tables</div><div class="task-detail">creators (id, name, slug, email, bio, avatar_url, plan, razorpay_key_id, stripe_account_id, gstin, created_at). creator_settings (theme, custom_domain, notification_prefs). Prisma migration.</div></td><td><span class="task-type tt-db">DB</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">3h</td></tr>
+      <tr><td class="tid">T-048</td><td><div class="task-name">Student tables</div><div class="task-detail">students (id, name, email, phone, avatar_url, whatsapp_number, created_at). student_sessions. student_addresses (for GST invoice generation). Indexes on email, phone.</div></td><td><span class="task-type tt-db">DB</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">2h</td></tr>
+      <tr><td class="tid">T-049</td><td><div class="task-name">Course, module, lesson tables</div><div class="task-detail">courses (id, creator_id, title, slug, description, thumbnail, price, currency, status, type). modules (id, course_id, title, order). lessons (id, module_id, title, content_type, video_id, duration, is_free, order, drip_days).</div></td><td><span class="task-type tt-db">DB</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">3h</td></tr>
+      <tr><td class="tid">T-050</td><td><div class="task-name">Enrolment & progress tables</div><div class="task-detail">enrolments (id, student_id, course_id, enrolled_at, expires_at, status, source). lesson_completions (student_id, lesson_id, completed_at, watch_seconds). course_progress (student_id, course_id, percent_complete, last_lesson_id).</div></td><td><span class="task-type tt-db">DB</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">3h</td></tr>
+      <tr><td class="tid">T-051</td><td><div class="task-name">Payment & invoice tables</div><div class="task-detail">payments (id, creator_id, student_id, course_id, amount, currency, gateway, gateway_order_id, gateway_payment_id, status, created_at). invoices (id, payment_id, invoice_number, gstin_seller, gstin_buyer, cgst, sgst, igst, pdf_url).</div></td><td><span class="task-type tt-db">DB</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">3h</td></tr>
+      <tr><td class="tid">T-052</td><td><div class="task-name">Quiz, assignment, certificate tables</div><div class="task-detail">quizzes (id, lesson_id, passing_score). quiz_questions (id, quiz_id, question, type, options, correct_answer). quiz_attempts (student_id, quiz_id, score, passed_at). certificates (id, student_id, course_id, issued_at, pdf_url, verify_code).</div></td><td><span class="task-type tt-db">DB</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">3h</td></tr>
+      <tr><td class="tid">T-053</td><td><div class="task-name">Coupon & discount tables</div><div class="task-detail">coupons (id, creator_id, code, type: percent|fixed, value, max_uses, used_count, valid_from, valid_until, course_ids[]). coupon_uses (coupon_id, student_id, payment_id, used_at).</div></td><td><span class="task-type tt-db">DB</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">2h</td></tr>
+      <tr><td class="tid">T-054</td><td><div class="task-name">Lead & email subscriber tables</div><div class="task-detail">leads (id, creator_id, email, name, phone, source, tags[], subscribed_at, unsubscribed_at). email_events (lead_id, campaign_id, event: open|click|bounce|unsubscribe, occurred_at). Tag system for segmentation.</div></td><td><span class="task-type tt-db">DB</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">3h</td></tr>
+      <tr><td class="tid">T-055</td><td><div class="task-name">Website & page content tables</div><div class="task-detail">pages (id, creator_id, slug, title, type: home|course|landing|blog, meta_title, meta_description, og_image, status, content JSONB). page_blocks (id, page_id, block_type, order, props JSONB). Published vs draft versioning.</div></td><td><span class="task-type tt-db">DB</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">3h</td></tr>
+      <tr><td class="tid">T-056</td><td><div class="task-name">Audit log table & soft deletes</div><div class="task-detail">audit_logs (entity_type, entity_id, action, old_value JSONB, new_value JSONB, actor_id, ip_address, created_at). Add deleted_at column to all major tables for soft delete. Prisma middleware for audit logging.</div></td><td><span class="task-type tt-db">DB</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">4h</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 1.3 Course Builder -->
+<div class="section" id="p1-course">
+  <div class="section-head">
+    <div class="section-icon" style="background:rgba(255,107,53,.12)">🎓</div>
+    <div class="section-title">1.3 — Course Builder</div>
+    <div class="section-count">18 tasks</div>
+  </div>
+  <table class="task-table">
+    <thead><tr><th>ID</th><th>Task</th><th>Type</th><th>Priority</th><th>Est.</th></tr></thead>
+    <tbody>
+      <tr><td class="tid">T-057</td><td><div class="task-name">Create new course flow</div><div class="task-detail">Step 1: title, description, category, language tag. Step 2: thumbnail upload (auto-resize to 1280×720). Step 3: pricing (free/paid). Step 4: review & publish. Draft saved at every step.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-058</td><td><div class="task-name">Course curriculum editor (drag-and-drop)</div><div class="task-detail">Sidebar: sections/modules list with DnD reorder (dnd-kit). Main panel: module expanded with lessons. Add section, rename, delete. Add lesson to section. Reorder lessons within section. Move lesson between sections.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">2d</td></tr>
+      <tr><td class="tid">T-059</td><td><div class="task-name">Lesson content editor — video type</div><div class="task-detail">Upload video file or paste YouTube/Vimeo URL. Show upload progress bar. Display video thumbnail preview. Set lesson title, description. Mark as free preview toggle.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-060</td><td><div class="task-name">Lesson content editor — text/rich content type</div><div class="task-detail">TipTap rich text editor. Heading styles (H1–H3), bold, italic, lists, blockquote, code block. Inline image upload. Embed video/audio. Export to HTML. Auto-save every 30 seconds.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-061</td><td><div class="task-name">Lesson content editor — file/PDF attachment type</div><div class="task-detail">Upload any file (PDF, DOCX, XLSX, ZIP up to 500MB). Display file name, size, type icon. Student downloads after enrolment. Preview PDF in-browser option.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">4h</td></tr>
+      <tr><td class="tid">T-062</td><td><div class="task-name">Drip content scheduling</div><div class="task-detail">Per lesson: set "unlock X days after enrolment" or "unlock on specific date". UI: date picker or days input. API enforces access check. Students see locked lessons with unlock countdown.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">6h</td></tr>
+      <tr><td class="tid">T-063</td><td><div class="task-name">Pre-requisite lesson locking</div><div class="task-detail">Creator sets "requires completion of [lesson X] to unlock". API checks completion before serving lesson content. Locked lessons shown greyed out in curriculum.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">4h</td></tr>
+      <tr><td class="tid">T-064</td><td><div class="task-name">Course settings page</div><div class="task-detail">Edit: title, description, thumbnail, category, language, SEO (meta title, description, OG image), enrolment type (open/invite), access duration (lifetime/X days/expiry date), certificate enabled toggle.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">6h</td></tr>
+      <tr><td class="tid">T-065</td><td><div class="task-name">Course pricing settings</div><div class="task-detail">Price type: free, one-time, subscription, payment plan. One-time: INR price + USD price (optional). Payment plan: define X installments of ₹Y each. Discount price with strikethrough original. Enrolment open/closed toggle.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">6h</td></tr>
+      <tr><td class="tid">T-066</td><td><div class="task-name">Course publish / draft / archive workflow</div><div class="task-detail">States: DRAFT → PUBLISHED → ARCHIVED. Published courses visible to public. Draft not indexable. Archived stops new enrolments but existing students retain access.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">3h</td></tr>
+      <tr><td class="tid">T-067</td><td><div class="task-name">Course preview mode for creators</div><div class="task-detail">Creator can preview their course exactly as a student sees it. "Preview as student" button switches to student view. Preview link shareable with team (no login required with token).</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">4h</td></tr>
+      <tr><td class="tid">T-068</td><td><div class="task-name">Quiz builder</div><div class="task-detail">Add quiz to any lesson. Question types: MCQ (single/multiple answer), True/False, fill-in-blank. Set passing score (%). Randomise questions option. Show correct answers on completion or hide them.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-069</td><td><div class="task-name">Quiz attempt logic & result storage</div><div class="task-detail">Student submits quiz → API grades it → store attempt (student_id, quiz_id, answers, score, pass/fail, time_taken). Show result immediately. Allow re-attempts (creator sets max attempts). Block lesson completion if quiz not passed.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">6h</td></tr>
+      <tr><td class="tid">T-070</td><td><div class="task-name">Assignment / file submission</div><div class="task-detail">Creator adds assignment to lesson. Student uploads file (PDF/doc/image up to 50MB). Creator reviews in dashboard: view submission, write feedback comment, mark as complete. Email notification to student on review.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-071</td><td><div class="task-name">Certificate template designer</div><div class="task-detail">Canvas-based certificate editor. Pre-built templates (3 options). Customise: logo, background, font, colours, text layout. Variable fields: {{student_name}}, {{course_name}}, {{date}}, {{creator_name}}. Preview and save.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">2d</td></tr>
+      <tr><td class="tid">T-072</td><td><div class="task-name">Certificate auto-generation & delivery</div><div class="task-detail">Trigger: all lessons complete + all quizzes passed. Generate PDF with Puppeteer or PDFKit using template. Upload to R2. Store URL in certificates table. Email to student. Unique verify URL (/verify/[code]).</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-073</td><td><div class="task-name">Course bundle builder</div><div class="task-detail">Creator selects 2–10 courses to bundle. Sets bundle name, description, thumbnail. Bundle price (usually lower than sum). Students enrol in all bundled courses on purchase.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">6h</td></tr>
+      <tr><td class="tid">T-074</td><td><div class="task-name">Digital product (non-course) creation</div><div class="task-detail">Creator creates a "product" that's a file download: upload file, set title, description, price. After purchase, student gets download link via email + in student dashboard. Watermark PDF option.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">6h</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 1.4 Video Hosting -->
+<div class="section" id="p1-video">
+  <div class="section-head">
+    <div class="section-icon" style="background:rgba(192,132,252,.12)">🎬</div>
+    <div class="section-title">1.4 — Video Hosting & Processing</div>
+    <div class="section-count">8 tasks</div>
+  </div>
+  <table class="task-table">
+    <thead><tr><th>ID</th><th>Task</th><th>Type</th><th>Priority</th><th>Est.</th></tr></thead>
+    <tbody>
+      <tr><td class="tid">T-075</td><td><div class="task-name">Direct-to-R2 video upload with presigned URLs</div><div class="task-detail">Backend generates presigned S3 PUT URL (15min expiry). Frontend uploads directly to R2 (bypasses server). Progress bar via XMLHttpRequest. On complete, notify backend via callback endpoint.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">6h</td></tr>
+      <tr><td class="tid">T-076</td><td><div class="task-name">Video transcoding pipeline</div><div class="task-detail">On upload complete: trigger Cloudflare Stream or Mux ingest. Poll webhook for processing complete. Store video ID + playback URL + thumbnail URL in lessons table. Show processing spinner in creator UI.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-077</td><td><div class="task-name">Video player component</div><div class="task-detail">HLS adaptive streaming player (Video.js or Plyr). Playback speed selector (0.5x–2x). Remember last position per student per lesson. Chapter markers from lesson timestamps. Keyboard shortcuts.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-078</td><td><div class="task-name">Video access control (signed URLs)</div><div class="task-detail">All video playback via short-lived signed URLs (1h). Backend checks enrolment before issuing URL. Free preview lessons get unsigned public URL. Prevents URL sharing/hotlinking.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">4h</td></tr>
+      <tr><td class="tid">T-079</td><td><div class="task-name">Video watch progress tracking</div><div class="task-detail">Player sends heartbeat every 10 seconds (current position). Store last_watched_position per student per lesson. Auto-mark lesson complete when 90% watched. Resume from last position on revisit.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">6h</td></tr>
+      <tr><td class="tid">T-080</td><td><div class="task-name">YouTube video embed support</div><div class="task-detail">Creator pastes YouTube URL → extract video ID → embed YouTube player (nocookie domain). Track watch time via YouTube iframe API. Mark complete at 90% watched. Works without storage cost.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">4h</td></tr>
+      <tr><td class="tid">T-081</td><td><div class="task-name">DRM watermark — student name overlay</div><div class="task-detail">Overlay student's name + email semi-transparently on video during playback (CSS overlay, not burned in). Position randomised and changes every 2 minutes. Deters screen recording sharing.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">4h</td></tr>
+      <tr><td class="tid">T-082</td><td><div class="task-name">Adaptive quality for slow internet (India)</div><div class="task-detail">HLS with multiple quality tracks: 1080p, 720p, 480p, 360p. Auto-quality detection. Manual quality selector in player. 360p optimised for 3G connections. Buffer ahead 30 seconds.</div></td><td><span class="task-type tt-infra">INFRA</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">4h</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 1.5 Website Builder -->
+<div class="section" id="p1-website">
+  <div class="section-head">
+    <div class="section-icon" style="background:rgba(96,165,250,.12)">🌐</div>
+    <div class="section-title">1.5 — Website Builder & Pages</div>
+    <div class="section-count">12 tasks</div>
+  </div>
+  <table class="task-table">
+    <thead><tr><th>ID</th><th>Task</th><th>Type</th><th>Priority</th><th>Est.</th></tr></thead>
+    <tbody>
+      <tr><td class="tid">T-083</td><td><div class="task-name">Multi-tenant routing architecture</div><div class="task-detail">Middleware: incoming request → check if host matches custom domain → lookup creator → serve their site. Fallback: subdomain routing (creator.platform.com). Next.js middleware with edge config.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-084</td><td><div class="task-name">Custom domain connection flow</div><div class="task-detail">Creator enters domain → show DNS instructions (CNAME to platform). Verify DNS propagation (check CNAME record). Auto-provision SSL certificate via Let's Encrypt (Certbot or ACME.js). Show status: pending/active.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-085</td><td><div class="task-name">Page builder — block editor engine</div><div class="task-detail">JSONB-based page structure. BlockTypes: hero, features-grid, testimonials, pricing-table, FAQ-accordion, image-text, video-embed, countdown, form, CTA, spacer, divider, HTML embed. Each block has props. Render engine converts JSONB → React components.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">3d</td></tr>
+      <tr><td class="tid">T-086</td><td><div class="task-name">Page builder — drag-and-drop UI</div><div class="task-detail">Left panel: block library (drag blocks to canvas). Canvas: live preview of page. Right panel: selected block props editor. Undo/redo (20 steps). Save as draft. Publish. Mobile preview toggle.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">3d</td></tr>
+      <tr><td class="tid">T-087</td><td><div class="task-name">Course sales page auto-generation</div><div class="task-detail">When course published: auto-create sales page with curriculum preview block, creator bio block, pricing block, enrolment CTA. Creator can edit further. SEO meta auto-filled from course title/description.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">6h</td></tr>
+      <tr><td class="tid">T-088</td><td><div class="task-name">Blog system</div><div class="task-detail">Create/edit blog posts with TipTap. Categories and tags. Featured image. SEO meta per post. Publish/draft/schedule. Blog index page with pagination. RSS feed at /feed.xml. Author attribution.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">2d</td></tr>
+      <tr><td class="tid">T-089</td><td><div class="task-name">Checkout page & flow</div><div class="task-detail">Dedicated /checkout/[course-id] page. Show: course thumbnail, title, price, creator photo. Email input → check if existing student → pre-fill. Payment method selector (UPI/card/netbanking/wallet). Order summary. Apply coupon code input. Buy button → payment gateway.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">2d</td></tr>
+      <tr><td class="tid">T-090</td><td><div class="task-name">Thank-you / post-purchase page</div><div class="task-detail">After successful payment: "You're enrolled!" page. Show next steps. Link to student dashboard. Invoice download button. Social share (WhatsApp/Twitter). Optional: upsell block for related course.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">4h</td></tr>
+      <tr><td class="tid">T-091</td><td><div class="task-name">Lead capture / opt-in page type</div><div class="task-detail">Minimal page: headline, subheadline, email+name form, submit button. On submit: create lead record, send welcome email, redirect to thank-you URL. Used for free resources / webinar registration.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">6h</td></tr>
+      <tr><td class="tid">T-092</td><td><div class="task-name">Public creator profile page</div><div class="task-detail">/[creator-slug] or custom domain homepage. Shows: creator photo, bio, social links, all published courses grid, testimonials. Served via SSG with ISR revalidation every 5 minutes.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">6h</td></tr>
+      <tr><td class="tid">T-093</td><td><div class="task-name">SEO & sitemap system</div><div class="task-detail">Next.js generateMetadata for all public pages. Dynamic sitemap.xml at /sitemap.xml (courses + blog posts + pages). robots.txt. Structured data (JSON-LD) for Course schema and Person schema. Open Graph images.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">6h</td></tr>
+      <tr><td class="tid">T-094</td><td><div class="task-name">Site theme & branding customisation</div><div class="task-detail">Creator sets: primary colour, secondary colour, font (from curated list of 10). Platform injects CSS variables into all public pages. Logo upload. Favicon upload. Header/footer nav links editor.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">6h</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 1.6 Payments & GST -->
+<div class="section" id="p1-payment">
+  <div class="section-head">
+    <div class="section-icon" style="background:rgba(74,222,128,.12)">💳</div>
+    <div class="section-title">1.6 — Payments, GST & Billing</div>
+    <div class="section-count">18 tasks</div>
+  </div>
+  <table class="task-table">
+    <thead><tr><th>ID</th><th>Task</th><th>Type</th><th>Priority</th><th>Est.</th></tr></thead>
+    <tbody>
+      <tr><td class="tid">T-095</td><td><div class="task-name">Razorpay OAuth — creator connects own account</div><div class="task-detail">Creator goes to Settings → Payments → "Connect Razorpay". Razorpay OAuth flow: redirect → creator authorises → store access_token + account_id + razorpay_key_id encrypted. Platform never touches money directly.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-096</td><td><div class="task-name">Razorpay order creation API</div><div class="task-detail">POST /api/payments/create-order: validate course + student, apply coupon if any, calculate GST, create Razorpay order using creator's key_id, return order_id + key to frontend. Store pending payment record.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">6h</td></tr>
+      <tr><td class="tid">T-097</td><td><div class="task-name">Razorpay checkout integration (frontend)</div><div class="task-detail">Load Razorpay JS SDK. Open checkout modal with: amount, currency, name, description, prefill (student email+phone), theme colour (creator's brand colour). Handle payment success → send to verification endpoint.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">6h</td></tr>
+      <tr><td class="tid">T-098</td><td><div class="task-name">Razorpay payment verification & webhook</div><div class="task-detail">Verify payment signature (hmac-sha256). Webhook endpoint: handle payment.captured, payment.failed, order.paid. Idempotent: check if payment already processed. On success: enrol student, generate invoice, send emails.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-099</td><td><div class="task-name">UPI payment support</div><div class="task-detail">Razorpay supports UPI natively. Ensure UPI method enabled in checkout. Test with: Google Pay, PhonePe, Paytm, BHIM. UPI intent on mobile (opens UPI app directly). QR code on desktop.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">3h</td></tr>
+      <tr><td class="tid">T-100</td><td><div class="task-name">EMI payment option via Razorpay</div><div class="task-detail">Enable bank EMI in Razorpay checkout for orders above ₹3,000. Show available EMI plans (3/6/9/12 months) with interest rate. Creator opts in to enable EMI for their courses. EMI bank list from Razorpay API.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">4h</td></tr>
+      <tr><td class="tid">T-101</td><td><div class="task-name">Stripe integration for international payments</div><div class="task-detail">Stripe Connect (Express): creator connects own Stripe account. Create Payment Intent with creator's Stripe account. Handle success/failure. Stripe webhook verification. Support: USD, EUR, GBP, AED currencies.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-102</td><td><div class="task-name">Coupon code system — backend</div><div class="task-detail">CRUD API for coupons. Validation: code exists, not expired, usage limit not reached, applicable to this course. Calculate discount amount. Return discounted total. Record coupon use on payment success.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">6h</td></tr>
+      <tr><td class="tid">T-103</td><td><div class="task-name">Coupon code system — creator UI</div><div class="task-detail">Coupon manager page: create coupon (code, type, value, expiry, usage limit, applicable courses). Table of all coupons with status. See usage count. Deactivate coupon. Bulk create codes (CSV export).</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">4h</td></tr>
+      <tr><td class="tid">T-104</td><td><div class="task-name">Subscription / recurring payment setup</div><div class="task-detail">Creator sets course as subscription (monthly/annual). Razorpay Subscription creation. Student enrolled on first charge. Auto-renew via Razorpay. Webhook for subscription.charged, subscription.cancelled. Revoke access on cancellation.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-105</td><td><div class="task-name">Payment plan (installments) handling</div><div class="task-detail">Creator defines installment plan (e.g. 3 × ₹2000). Razorpay Subscription with custom billing. Store schedule. Charge on due dates. Notify student before charge. Revoke access if installment missed after 7d grace.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-106</td><td><div class="task-name">Refund processing</div><div class="task-detail">Creator initiates refund from student detail page. Call Razorpay refund API using creator's key. On success: update payment status, revoke course access, record refund in DB. Email confirmation to student and creator.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">6h</td></tr>
+      <tr><td class="tid">T-107</td><td><div class="task-name">GST invoice auto-generation — engine</div><div class="task-detail">On payment success: determine CGST/SGST (same state) vs IGST (interstate) based on seller GSTIN state vs buyer state. Calculate tax amounts. Assign sequential invoice number (INV-2025-0001). Store all fields. Generate PDF.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">2d</td></tr>
+      <tr><td class="tid">T-108</td><td><div class="task-name">GST invoice PDF generator</div><div class="task-detail">Puppeteer or pdfkit: render invoice HTML to PDF. Fields: invoice number, date, seller name+GSTIN+address, buyer name+GSTIN+address, item description, base amount, CGST/SGST/IGST rate+amount, total. Upload to R2.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-109</td><td><div class="task-name">GSTIN settings & validation for creators</div><div class="task-detail">Creator enters GSTIN in settings. Validate format (15-character GST format regex). Optional: verify against GST API (gstin.gov.in). Store registered business name + address from GST lookup. Used on all invoices.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">4h</td></tr>
+      <tr><td class="tid">T-110</td><td><div class="task-name">Buyer GSTIN at checkout (B2B support)</div><div class="task-detail">Optional field at checkout: "Enter GST number (for business purchase)". If provided: validate GSTIN, fetch business name, include on invoice as buyer GSTIN. B2B students can claim input tax credit.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">3h</td></tr>
+      <tr><td class="tid">T-111</td><td><div class="task-name">GSTR-1 export for creators</div><div class="task-detail">Reports page: GSTR-1 Export. Date range selector. Generate CSV/Excel in GSTR-1 format: B2B invoices (with buyer GSTIN), B2C summary. Saves creator 4–6 hours every quarter on GST filing.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-112</td><td><div class="task-name">Payment dashboard for creators</div><div class="task-detail">Transactions table: date, student name, course, amount, GST, status, invoice download link. Filter by date range, course, payment method, status. Total revenue KPI card. Export to CSV.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 1.7 Student Dashboard -->
+<div class="section" id="p1-student">
+  <div class="section-head">
+    <div class="section-icon" style="background:rgba(251,191,36,.12)">📚</div>
+    <div class="section-title">1.7 — Student Learning Dashboard</div>
+    <div class="section-count">12 tasks</div>
+  </div>
+  <table class="task-table">
+    <thead><tr><th>ID</th><th>Task</th><th>Type</th><th>Priority</th><th>Est.</th></tr></thead>
+    <tbody>
+      <tr><td class="tid">T-113</td><td><div class="task-name">Student home — enrolled courses overview</div><div class="task-detail">Grid of enrolled courses. Per card: thumbnail, title, creator name, progress ring %, last lesson, "Continue" CTA. Sort: recently accessed. Empty state: "Browse courses".</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">6h</td></tr>
+      <tr><td class="tid">T-114</td><td><div class="task-name">Course player page</div><div class="task-detail">Layout: sidebar (curriculum tree, completion checkmarks) + main (video/content) + optional notes panel. Auto-mark lesson complete. Navigate to next lesson via button. Keyboard: N (next), P (prev), space (play/pause).</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">2d</td></tr>
+      <tr><td class="tid">T-115</td><td><div class="task-name">Lesson notes — take & export</div><div class="task-detail">Notes panel slides in from right. Textarea with video timestamp auto-inserted on click. Notes saved in real-time (debounced). Notes list per course. Export all notes as PDF. Print view.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">6h</td></tr>
+      <tr><td class="tid">T-116</td><td><div class="task-name">Q&A per lesson</div><div class="task-detail">Below video: Q&A tab. Post question (text, max 500 chars). Questions list: newest first, upvote button. Creator/TA can reply. Mark answer as "accepted". Email creator on new question.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-117</td><td><div class="task-name">Progress tracking & completion marking</div><div class="task-detail">API: POST /lessons/[id]/complete. Recalculate course progress %. Curriculum shows checkmarks. Trigger certificate check on 100% completion. Progress bar in course card on home.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">4h</td></tr>
+      <tr><td class="tid">T-118</td><td><div class="task-name">Certificate page & download</div><div class="task-detail">Certificates tab in student dashboard. Grid of earned certificates. Each: course name, date, download PDF button, share on LinkedIn button (pre-filled post), verify URL.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">4h</td></tr>
+      <tr><td class="tid">T-119</td><td><div class="task-name">Purchase history & invoice download</div><div class="task-detail">Purchases tab: table of all payments (date, course, amount, gateway). Download GST invoice PDF per transaction. Retry failed payment link. Cancel subscription button.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">4h</td></tr>
+      <tr><td class="tid">T-120</td><td><div class="task-name">Student notification preferences</div><div class="task-detail">Student can opt in/out of: new lesson notifications, drip unlock alerts, quiz due reminders, community replies, WhatsApp notifications, email notifications.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">3h</td></tr>
+      <tr><td class="tid">T-121</td><td><div class="task-name">Course review & rating submission</div><div class="task-detail">After 80% progress: prompt for review. 1–5 star rating + text review (min 50 chars). One review per student per course. Edit review within 30 days. Reviews appear on public course page.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">4h</td></tr>
+      <tr><td class="tid">T-122</td><td><div class="task-name">Learning streaks & activity</div><div class="task-detail">Track daily activity (min 1 lesson/quiz). Streak count in dashboard header. Milestone badges: 7-day streak, 30-day streak, 10 lessons, 50 lessons. Streak reset notification email. Streak recovery window (24h grace).</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-med">MED</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-123</td><td><div class="task-name">Student mobile — responsive design</div><div class="task-detail">All student pages fully responsive (320px–1440px). Video player full-screen on mobile. Curriculum sidebar as bottom sheet on mobile. Touch-friendly tap targets (min 44px). Test on real Android/iOS devices.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">2d</td></tr>
+      <tr><td class="tid">T-124</td><td><div class="task-name">Transactional email sends for student events</div><div class="task-detail">Triggers: enrolment confirmation, new lesson drip unlock, quiz result, certificate issued, course completion, refund processed. Use React Email templates. Queue via BullMQ to avoid blocking payment flow.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 1.8 Creator Dashboard -->
+<div class="section" id="p1-creator">
+  <div class="section-head">
+    <div class="section-icon" style="background:rgba(255,107,53,.12)">🎛️</div>
+    <div class="section-title">1.8 — Creator Dashboard & CRM</div>
+    <div class="section-count">14 tasks</div>
+  </div>
+  <table class="task-table">
+    <thead><tr><th>ID</th><th>Task</th><th>Type</th><th>Priority</th><th>Est.</th></tr></thead>
+    <tbody>
+      <tr><td class="tid">T-125</td><td><div class="task-name">Creator home — overview dashboard</div><div class="task-detail">KPI cards: today's revenue, total students, courses published, pending questions. Recent activity feed: new enrolments, new reviews, new questions. Quick actions: create course, view students, check revenue.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-126</td><td><div class="task-name">Students CRM list</div><div class="task-detail">Table: name, email, phone, enrolled courses, enrolment date, total spent, last active. Search by name/email. Filter by course. Sort by any column. Export to CSV. Pagination (50 per page).</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-127</td><td><div class="task-name">Individual student detail view</div><div class="task-detail">Student profile: contact info, all enrolments with progress %, payment history with invoice links, quiz results, certificate earned, notes field (creator private notes). Actions: manual enrol, revoke access, send email.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-128</td><td><div class="task-name">Manual enrolment (grant free access)</div><div class="task-detail">Creator enters student email → select course → set expiry (optional) → enrol. Creates enrolment record with source=MANUAL. Student gets access immediately. Welcome email sent automatically.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">3h</td></tr>
+      <tr><td class="tid">T-129</td><td><div class="task-name">Bulk enrolment via CSV upload</div><div class="task-detail">Upload CSV (email, name columns). Preview parsed rows. Select course + expiry date. Process in background job. Show progress. Report: enrolled X / skipped Y (already enrolled). Download error report.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">6h</td></tr>
+      <tr><td class="tid">T-130</td><td><div class="task-name">Q&A management for creators</div><div class="task-detail">Inbox view of all unanswered questions across all courses. Filter by course. Mark as answered. Type reply. Assign to TA. Sort by newest / most upvoted. Badge count on nav for pending questions.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">6h</td></tr>
+      <tr><td class="tid">T-131</td><td><div class="task-name">Reviews management</div><div class="task-detail">All reviews in one place across courses. Star rating distribution chart per course. Reply to reviews (public reply). Report abusive review. Feature review (shown first on sales page).</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">4h</td></tr>
+      <tr><td class="tid">T-132</td><td><div class="task-name">Creator onboarding wizard (5 steps)</div><div class="task-detail">Step 1: profile info. Step 2: connect Razorpay. Step 3: create first course. Step 4: customise website. Step 5: connect custom domain. Progress indicator. Can skip + return. Completion badge on dashboard.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">2d</td></tr>
+      <tr><td class="tid">T-133</td><td><div class="task-name">Platform subscription (creator pays you) — Razorpay</div><div class="task-detail">Creator selects plan (Free/Starter/Pro) and pays platform subscription via Razorpay. Plan stored in creators table. Feature gates check plan level. Upgrade/downgrade flow. Invoice for creator's plan payment.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-134</td><td><div class="task-name">Creator revenue dashboard</div><div class="task-detail">Charts: daily/weekly/monthly revenue trend (line chart). Revenue by course (bar chart). Payment method breakdown (pie). New enrolments trend. Average order value. Total lifetime revenue. Date range filter.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">2d</td></tr>
+      <tr><td class="tid">T-135</td><td><div class="task-name">Course analytics — per course view</div><div class="task-detail">Per-course stats: total enrolments, active students, completion rate %, avg progress %, lesson drop-off chart (which lesson do most students quit at), quiz pass rate %, revenue generated.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-136</td><td><div class="task-name">Notification centre (creator)</div><div class="task-detail">Bell icon in top nav with badge count. Dropdown: recent notifications with type icon (enrolment, question, review, payment, system). Mark all as read. Link to relevant page. Configurable: which events notify.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">4h</td></tr>
+      <tr><td class="tid">T-137</td><td><div class="task-name">Webhook settings for integrations</div><div class="task-detail">Creator sets webhook URL. Select events to subscribe (new_enrolment, payment_success, course_complete, quiz_passed). Platform sends POST with JSON payload on event. Webhook delivery log with retry on failure.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-138</td><td><div class="task-name">Creator support & help centre</div><div class="task-detail">Embedded help widget (Intercom or Crisp). Help docs at /help (Notion or custom). Search help articles. Contact support button → email or live chat. Creator community link (WhatsApp group for creators on your platform).</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">4h</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════ PHASE 2 ═══ -->
+<div class="phase-header" id="phase2">
+  <div class="phase-tag ph-p2">◆ Phase 2 · Weeks 11–20</div>
+  <h2>Core Product — Community, Email, Analytics, Mobile</h2>
+  <p>These features are what keep students engaged and creators earning month over month. The difference between a platform and just a course file delivery service.</p>
+  <div class="phase-meta">
+    <div class="pm-item">Duration: <span>10 weeks</span></div>
+    <div class="pm-item">Tasks: <span>68</span></div>
+    <div class="pm-item">Milestone: <span>Complete engagement loop — creators retained</span></div>
+  </div>
+</div>
+
+<!-- 2.1 Community & Live -->
+<div class="section" id="p2-community">
+  <div class="section-head">
+    <div class="section-icon" style="background:rgba(192,132,252,.12)">🏘️</div>
+    <div class="section-title">2.1 — Community & Live Sessions</div>
+    <div class="section-count">14 tasks</div>
+  </div>
+  <table class="task-table">
+    <thead><tr><th>ID</th><th>Task</th><th>Type</th><th>Priority</th><th>Est.</th></tr></thead>
+    <tbody>
+      <tr><td class="tid">T-139</td><td><div class="task-name">Community space data model & API</div><div class="task-detail">communities table (id, creator_id, course_id, name, description, type: public|private). posts (id, community_id, author_id, content, media_urls[], pinned, created_at). replies (id, post_id, author_id, content). reactions (post_id, student_id, emoji).</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-140</td><td><div class="task-name">Community feed UI (student-facing)</div><div class="task-detail">Infinite scroll feed of posts. Create post: text + image + video embed. React with emoji. Threaded replies. Pin post (creator only). Search within community. Sort: new/top. Mobile-first layout.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">3d</td></tr>
+      <tr><td class="tid">T-141</td><td><div class="task-name">Community moderation tools</div><div class="task-detail">Creator/TA can: delete post, ban member, mute member (7d/30d/permanent), edit post, pin post, move to different space. Report post flow for students. Moderation log.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-142</td><td><div class="task-name">Community access control</div><div class="task-detail">Community auto-gates to enrolled students. Free community option for public access. Course-specific communities unlock on enrolment. Creator can grant/revoke community access separately from course access.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">4h</td></tr>
+      <tr><td class="tid">T-143</td><td><div class="task-name">Real-time notifications for community activity</div><div class="task-detail">WebSocket (Socket.io) or SSE for real-time: new reply on your post, mention (@username), creator pinned your post, new announcement. Browser notification permission request. Badge count update.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">2d</td></tr>
+      <tr><td class="tid">T-144</td><td><div class="task-name">WhatsApp group integration for courses</div><div class="task-detail">Creator pastes WhatsApp group invite link. On enrolment: auto-send WhatsApp invite link to student via WhatsApp API or email. Link revoked option (paste revoke URL). Student count tracker in creator dashboard.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">6h</td></tr>
+      <tr><td class="tid">T-145</td><td><div class="task-name">Telegram channel/group integration</div><div class="task-detail">Creator connects Telegram bot (BotFather token). Bot auto-sends group invite link to student after enrolment. Revoke via Telegram API on access expiry. Bot can post announcements from creator dashboard.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-146</td><td><div class="task-name">Live class scheduling</div><div class="task-detail">Creator schedules class: title, description, date/time, duration, platform (Zoom/Google Meet/custom link). Add to course curriculum or standalone event. Students see in calendar view. Email + WhatsApp reminder 1h before.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-147</td><td><div class="task-name">Live class Zoom auto-link generation</div><div class="task-detail">Creator connects Zoom OAuth. Platform auto-creates Zoom meeting for each scheduled class. Stores join URL. Students see "Join Class" button at class time. Host link shown only to creator/TAs.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-148</td><td><div class="task-name">Class recording upload & attach to lesson</div><div class="task-detail">After live class: creator uploads recording (or Zoom auto-export). Attach recording to class schedule entry. Enrolled students who missed class can access recording. Same video player + progress tracking.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">6h</td></tr>
+      <tr><td class="tid">T-149</td><td><div class="task-name">Cohort course mode</div><div class="task-detail">Course type: COHORT. Set enrolment window (start date, end date). Set batch start date. All cohort students unlock content on same schedule. Cohort-specific community space. Show cohort classmates count.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">2d</td></tr>
+      <tr><td class="tid">T-150</td><td><div class="task-name">Announcements system</div><div class="task-detail">Creator posts announcement to: all students, students of specific course, community members. Announcement shows as banner in student dashboard + community. Email broadcast for important announcements. Dismiss/read tracking.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">6h</td></tr>
+      <tr><td class="tid">T-151</td><td><div class="task-name">Student leaderboard (per course)</div><div class="task-detail">XP points system: lesson complete (+10), quiz pass (+20), streak day (+5), community post (+3), reply (+2). Leaderboard: top 20 per course. Student sees own rank. Weekly/all-time toggle. Privacy: opt-out option.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-med">MED</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-152</td><td><div class="task-name">Polls in community</div><div class="task-detail">Creator creates poll in community: question + 2–6 options. Duration (closes after X days). Students vote (single choice). Real-time vote count. Results chart. Export results.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-med">MED</span></td><td class="est">6h</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 2.2 Email Marketing -->
+<div class="section" id="p2-email">
+  <div class="section-head">
+    <div class="section-icon" style="background:rgba(251,191,36,.12)">📧</div>
+    <div class="section-title">2.2 — Email Marketing & Automation</div>
+    <div class="section-count">14 tasks</div>
+  </div>
+  <table class="task-table">
+    <thead><tr><th>ID</th><th>Task</th><th>Type</th><th>Priority</th><th>Est.</th></tr></thead>
+    <tbody>
+      <tr><td class="tid">T-153</td><td><div class="task-name">Email builder (drag-and-drop)</div><div class="task-detail">Block-based email editor. Blocks: text, image, button, divider, spacer, social icons, unsubscribe footer (required). Custom colours matching creator brand. Preview in desktop+mobile. Send test email.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">3d</td></tr>
+      <tr><td class="tid">T-154</td><td><div class="task-name">Email broadcast (one-time send)</div><div class="task-detail">Compose email. Select audience: all contacts / course-specific / by tag. Show estimated reach count. Schedule for later or send now. Unsubscribes excluded automatically. Delivery queued via BullMQ.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-155</td><td><div class="task-name">Email sequence (automation) builder</div><div class="task-detail">Visual flow: trigger → wait → email → condition → branch. Triggers: enrolment, purchase, lead opt-in, course complete, tag added. Wait: X days/hours. Condition: opened email / clicked link / course progress >= X%.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">3d</td></tr>
+      <tr><td class="tid">T-156</td><td><div class="task-name">Email automation execution engine</div><div class="task-detail">On trigger event: enqueue automation job. Job checks conditions → sends email or waits. BullMQ delayed jobs for "wait X days". Track state per subscriber in automation_subscribers table. Handle unsubscribes in-flight.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">2d</td></tr>
+      <tr><td class="tid">T-157</td><td><div class="task-name">Contact / lead management</div><div class="task-detail">Leads table: all contacts (students + opt-in leads). Search + filter. Tag management (create, rename, delete, bulk assign). Import CSV. Manually add contact. Unsubscribe / resubscribe. GDPR delete.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-158</td><td><div class="task-name">Email tracking — opens & clicks</div><div class="task-detail">Tracking pixel for opens (1×1 transparent GIF via unique URL). Click tracking: rewrite all links to /track/[email_id]/[link_id], redirect to original. Store event: email_events table. Privacy: respect Do Not Track header.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-159</td><td><div class="task-name">Email campaign analytics</div><div class="task-detail">Per campaign stats: sent, delivered, opened (%), clicked (%), unsubscribed, bounced. Click map showing which links were clicked most. Time-series chart of opens over 48h. Compare to previous campaign.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-160</td><td><div class="task-name">Abandoned cart email automation</div><div class="task-detail">Trigger: checkout page visited (email captured) but no payment in 1 hour. Auto-email: "You left something behind" with course name + price. Optional: include coupon code. Second reminder at 24h. Stop on purchase.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-161</td><td><div class="task-name">Unsubscribe handling & bounce management</div><div class="task-detail">One-click unsubscribe link in every email (CAN-SPAM/GDPR compliance). Unsubscribe page. Honor immediately. Hard bounce: auto-remove from list. Soft bounce: retry 3x then remove. Bounce rate alert if above 5%.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">6h</td></tr>
+      <tr><td class="tid">T-162</td><td><div class="task-name">Custom email sending domain (SMTP)</div><div class="task-detail">Creator sets up: reply@theirdomain.com. Platform provides DNS records (SPF, DKIM, DMARC) to add. Verify records. All emails sent from creator's domain. Improve deliverability vs generic platform domain.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-163</td><td><div class="task-name">WhatsApp broadcast campaign (India-first)</div><div class="task-detail">Creator composes WhatsApp template message (submit to Meta for approval). Send to opted-in student list. Schedule. Track delivered/read status via WhatsApp API webhooks. India: use Gupshup or AiSensy API.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">2d</td></tr>
+      <tr><td class="tid">T-164</td><td><div class="task-name">Lead magnet delivery automation</div><div class="task-detail">Creator uploads a free resource (PDF/video/template). Creates opt-in page. On form submit: create lead → add tag → send email with download link → start nurture sequence. Download link expires after 7 days.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-165</td><td><div class="task-name">Email A/B test</div><div class="task-detail">For broadcast: create variant B with different subject line. Split 30% A / 30% B. After 4h: auto-send winner (higher open rate) to remaining 40%. Show A/B results side by side.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-med">MED</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-166</td><td><div class="task-name">Email template library</div><div class="task-detail">Pre-built templates: welcome email, course launch announcement, webinar invite, student win story, course completion congratulations, festive discount (Diwali/Holi). Creator starts from template and edits.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">2d</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 2.3 Analytics -->
+<div class="section" id="p2-analytics">
+  <div class="section-head">
+    <div class="section-icon" style="background:rgba(96,165,250,.12)">📊</div>
+    <div class="section-title">2.3 — Analytics & Reporting</div>
+    <div class="section-count">10 tasks</div>
+  </div>
+  <table class="task-table">
+    <thead><tr><th>ID</th><th>Task</th><th>Type</th><th>Priority</th><th>Est.</th></tr></thead>
+    <tbody>
+      <tr><td class="tid">T-167</td><td><div class="task-name">Analytics events pipeline</div><div class="task-detail">Define event schema: event_name, entity_id, actor_id, properties JSONB, timestamp. Collect: page_viewed, video_played, video_completed, lesson_completed, course_enrolled, payment_completed, button_clicked. Batch insert to avoid write overhead.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">2d</td></tr>
+      <tr><td class="tid">T-168</td><td><div class="task-name">Revenue analytics page</div><div class="task-detail">Charts (Recharts): revenue by day/week/month. MRR for subscription courses. Revenue by course (horizontal bar). Revenue by payment method. Revenue by geography (top 10 cities). Date range picker.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">2d</td></tr>
+      <tr><td class="tid">T-169</td><td><div class="task-name">Student analytics page</div><div class="task-detail">New enrolments over time. Churn rate (subscription cancellations). Student geographic distribution. Active vs inactive students (inactive = no activity in 14d). Student lifetime value histogram.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-170</td><td><div class="task-name">Course performance analytics</div><div class="task-detail">Per-course: enrolments over time, completion funnel (enrolled → 25% → 50% → 100%), lesson drop-off chart, average time-to-complete, quiz pass rates, student satisfaction (avg rating).</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">2d</td></tr>
+      <tr><td class="tid">T-171</td><td><div class="task-name">Website traffic analytics</div><div class="task-detail">Integrate Plausible Analytics (privacy-friendly, hosted). Page views, unique visitors, top pages, traffic sources, bounce rate, country breakdown. Show on creator analytics page. No cookie consent needed.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-172</td><td><div class="task-name">Sales funnel conversion analytics</div><div class="task-detail">For each course: visitors → checkout page → payment started → payment completed. Drop-off % at each step. Abandoned checkout recovery rate. Conversion rate trend over time.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">2d</td></tr>
+      <tr><td class="tid">T-173</td><td><div class="task-name">UTM parameter tracking</div><div class="task-detail">Capture utm_source, utm_medium, utm_campaign, utm_content on landing. Store in session. Attribute to sale on conversion. Revenue by UTM source report. Useful for YouTube, Instagram, WhatsApp campaign attribution.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">6h</td></tr>
+      <tr><td class="tid">T-174</td><td><div class="task-name">Scheduled analytics digest email</div><div class="task-detail">Creator receives weekly email every Monday: last week's revenue, new enrolments, top course, completion rate changes, pending questions count. Toggle on/off. Summary, not raw data.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">6h</td></tr>
+      <tr><td class="tid">T-175</td><td><div class="task-name">Export reports to CSV & Excel</div><div class="task-detail">All major report pages have "Export" button. Revenue export: every transaction row. Students export: all student CRM data. Enrolments export. Format: CSV (standard) + XLSX (for accountants). Date range filter on all exports.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-176</td><td><div class="task-name">Affiliate performance analytics</div><div class="task-detail">Per affiliate: clicks, conversions, conversion rate, revenue generated, pending payout, paid payout. Top affiliates leaderboard. Creator can run affiliate payout via Razorpay Payouts API or manual.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">1d</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 2.4 Mobile App -->
+<div class="section" id="p2-mobile">
+  <div class="section-head">
+    <div class="section-icon" style="background:rgba(255,107,53,.12)">📱</div>
+    <div class="section-title">2.4 — White-Label Mobile App (React Native)</div>
+    <div class="section-count">12 tasks</div>
+  </div>
+  <table class="task-table">
+    <thead><tr><th>ID</th><th>Task</th><th>Type</th><th>Priority</th><th>Est.</th></tr></thead>
+    <tbody>
+      <tr><td class="tid">T-177</td><td><div class="task-name">React Native Expo base app setup</div><div class="task-detail">Expo managed workflow. TypeScript. Navigation with Expo Router. Auth flow (JWT stored in SecureStore). Dark/light mode. Custom fonts. Theming with creator's brand colours injected at build time.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">3d</td></tr>
+      <tr><td class="tid">T-178</td><td><div class="task-name">Mobile: enrolled courses home screen</div><div class="task-detail">Course cards with progress rings. Continue learning button (deep link to last lesson). Search enrolled courses. Pull-to-refresh. Skeleton loading states.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">2d</td></tr>
+      <tr><td class="tid">T-179</td><td><div class="task-name">Mobile: video player with offline download</div><div class="task-detail">Native video player (expo-av). Download lesson for offline: store encrypted video file locally. Download manager: show download progress, storage used. Play offline without internet. Auto-delete on unenrolment.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">3d</td></tr>
+      <tr><td class="tid">T-180</td><td><div class="task-name">Mobile: push notifications</div><div class="task-detail">Expo Notifications. Register device token on login. Push events: new lesson unlocked, live class starting, new Q&A reply, streak reminder (9pm if no activity). Creator can send push via dashboard.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">2d</td></tr>
+      <tr><td class="tid">T-181</td><td><div class="task-name">Mobile: community feed</div><div class="task-detail">Community in app: post, reply, react. Image picker for photo posts. Mentions with @username autocomplete. Real-time new post indicator. Deep link from push notification to specific post.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">2d</td></tr>
+      <tr><td class="tid">T-182</td><td><div class="task-name">Mobile: checkout & payment</div><div class="task-detail">Razorpay React Native SDK for in-app payment. UPI intent on Android (opens GPay/PhonePe). Apple Pay on iOS (Stripe). Seamless enrolment without leaving app.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">2d</td></tr>
+      <tr><td class="tid">T-183</td><td><div class="task-name">White-label build pipeline (per creator)</div><div class="task-detail">EAS Build with per-creator config. Inject: app name, bundle ID, logo, splash screen, primary colour at build time. Automate builds triggered from creator dashboard "Build App" button. Deliver APK (Android) + TestFlight/App Store (iOS).</div></td><td><span class="task-type tt-infra">INFRA</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">3d</td></tr>
+      <tr><td class="tid">T-184</td><td><div class="task-name">App Store submission guide for creators</div><div class="task-detail">Step-by-step guide: create Apple Dev account, Google Play Console, upload screenshots. Platform provides: screenshots generator tool, app description templates, ASO keyword suggestions for their niche.</div></td><td><span class="task-type tt-design">DESIGN</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">2d</td></tr>
+      <tr><td class="tid">T-185</td><td><div class="task-name">Mobile: live class join flow</div><div class="task-detail">Upcoming classes section in app. Countdown timer. Join button at class time (opens Zoom app or in-app WebRTC). Add to device calendar button. Class recording available after in same section.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-186</td><td><div class="task-name">Mobile: certificate & achievements</div><div class="task-detail">Achievements tab: badges earned, certificates grid. Certificate full-screen viewer with pinch-to-zoom. Share to WhatsApp/Instagram button. Download to camera roll.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-187</td><td><div class="task-name">Mobile: dark mode</div><div class="task-detail">Full dark mode support. Follows device system setting. Manual override in app settings. Creator's brand colour adapted for dark mode (auto-darken/lighten algorithm). Video player looks great in dark.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-188</td><td><div class="task-name">Mobile performance optimisation</div><div class="task-detail">FlatList for all lists (not ScrollView). Image lazy loading with BlurHash placeholder. Memoize expensive components. Bundle size audit. Cold start time < 2 seconds. Test on low-end Android (2GB RAM, Android 10).</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">2d</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 2.5 WhatsApp Layer -->
+<div class="section" id="p2-whatsapp">
+  <div class="section-head">
+    <div class="section-icon" style="background:rgba(74,222,128,.12)">💬</div>
+    <div class="section-title">2.5 — WhatsApp Notification Layer (India-First)</div>
+    <div class="section-count">8 tasks</div>
+  </div>
+  <table class="task-table">
+    <thead><tr><th>ID</th><th>Task</th><th>Type</th><th>Priority</th><th>Est.</th></tr></thead>
+    <tbody>
+      <tr><td class="tid">T-189</td><td><div class="task-name">WhatsApp Business API integration</div><div class="task-detail">Integrate Gupshup or AiSensy (cost-effective for India). Creator registers their WhatsApp Business number. Platform sends on behalf via API. Creator can use platform's number (shared) or bring own WABA.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">2d</td></tr>
+      <tr><td class="tid">T-190</td><td><div class="task-name">WhatsApp message templates (Meta approval)</div><div class="task-detail">Create and submit templates to Meta for approval. Templates needed: enrolment_welcome, new_lesson_unlock, live_class_reminder, certificate_issued, course_completed, drip_content_unlock. Wait 24–48h for approval.</div></td><td><span class="task-type tt-infra">INFRA</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-191</td><td><div class="task-name">WhatsApp opt-in at checkout</div><div class="task-detail">Checkout: checkbox "Get course updates on WhatsApp" (checked by default). Student enters WhatsApp number (pre-filled if same as account phone). Store whatsapp_opted_in flag + number. Required for GDPR/TCPA compliance.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">4h</td></tr>
+      <tr><td class="tid">T-192</td><td><div class="task-name">WhatsApp enrolment confirmation message</div><div class="task-detail">On payment success: send WhatsApp to student. Template: course name, creator name, dashboard link, quick start tip. Delivered within 60 seconds of payment. Fallback to email if WhatsApp fails.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">3h</td></tr>
+      <tr><td class="tid">T-193</td><td><div class="task-name">WhatsApp drip content unlock notifications</div><div class="task-detail">Scheduled job: check daily for lessons unlocking today. Send WhatsApp to enrolled students. Template: course name, lesson title, direct link. Respect opt-out. Batch sends to avoid API rate limits.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">4h</td></tr>
+      <tr><td class="tid">T-194</td><td><div class="task-name">WhatsApp live class reminder</div><div class="task-detail">Auto-send 2h before + 15min before scheduled class. Template: class title, time, join link. Only to enrolled + opted-in students. Creator can disable per class.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">3h</td></tr>
+      <tr><td class="tid">T-195</td><td><div class="task-name">WhatsApp broadcast from creator dashboard</div><div class="task-detail">Creator composes promotional WhatsApp message. Select audience (all students / course-specific). Preview message. Schedule or send now. Track delivered/read. Rate: max 250 messages/day on standard tier.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-196</td><td><div class="task-name">WhatsApp opt-out handling</div><div class="task-detail">Student replies STOP to any WhatsApp. Webhook receives reply → update whatsapp_opted_in=false. Never send again until they re-opt-in. Show opt-out status in student CRM. Allow creator to see who has opted out.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">3h</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════ PHASE 3 ═══ -->
+<div class="phase-header" id="phase3">
+  <div class="phase-tag ph-p3">◆ Phase 3 · Weeks 21–28</div>
+  <h2>Growth — Marketing, Affiliates, Advanced Monetisation</h2>
+  <p>Convert more visitors, make existing creators earn more, bring in new creators via affiliates. This is where the platform becomes a growth machine.</p>
+  <div class="phase-meta">
+    <div class="pm-item">Duration: <span>8 weeks</span></div>
+    <div class="pm-item">Tasks: <span>42</span></div>
+    <div class="pm-item">Milestone: <span>Creators growing MoM without platform help</span></div>
+  </div>
+</div>
+
+<!-- 3.1 Marketing Tools -->
+<div class="section" id="p3-marketing">
+  <div class="section-head">
+    <div class="section-icon" style="background:rgba(255,107,53,.12)">🚀</div>
+    <div class="section-title">3.1 — Marketing Tools & Conversion</div>
+    <div class="section-count">14 tasks</div>
+  </div>
+  <table class="task-table">
+    <thead><tr><th>ID</th><th>Task</th><th>Type</th><th>Priority</th><th>Est.</th></tr></thead>
+    <tbody>
+      <tr><td class="tid">T-197</td><td><div class="task-name">Sales funnel / pipeline builder</div><div class="task-detail">Visual funnel builder: landing page → opt-in → email sequence → sales page → checkout → thank-you. Link pages together. Preview full funnel. Stats per step. Duplicate funnel for new courses.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">3d</td></tr>
+      <tr><td class="tid">T-198</td><td><div class="task-name">Order bump at checkout</div><div class="task-detail">Creator adds "order bump" product to course checkout. Shown as checkbox before payment button: "Add [Product] for ₹500 more". One-click add. Increases average order value. Analytics tracks bump conversion rate.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">6h</td></tr>
+      <tr><td class="tid">T-199</td><td><div class="task-name">Post-purchase upsell page</div><div class="task-detail">After payment success: redirect to upsell page (before thank-you). Show related course at discounted price. One-click buy (no re-entering card details — charge same payment method). Decline → proceed to thank-you.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-200</td><td><div class="task-name">Waitlist & pre-launch system</div><div class="task-detail">Creator sets course status as WAITLIST. Waitlist signup page (email + name). Store in leads with tag=waitlist. Creator manually opens enrolment → auto-email all waitlist with buy link + optional early-bird price.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">6h</td></tr>
+      <tr><td class="tid">T-201</td><td><div class="task-name">Countdown timer on sales pages</div><div class="task-detail">Countdown block in page builder. Creator sets: end date/time, or session-based (resets per visitor for urgency). Options: "Early bird price ends", "Enrolment closes", "X seats left" (live count from enrolments).</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">4h</td></tr>
+      <tr><td class="tid">T-202</td><td><div class="task-name">Social proof widgets</div><div class="task-detail">Page builder blocks: recent enrolments popup ("Rahul from Mumbai just enrolled"). Star rating summary (X reviews, Y avg). Testimonial carousel. Student count badge. All pull live data from DB.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-203</td><td><div class="task-name">Facebook Pixel & Google Analytics integration</div><div class="task-detail">Creator enters FB Pixel ID + GA4 Measurement ID in settings. Platform injects tracking scripts into all public pages. Track: page_view, add_to_cart, purchase events. Conversion value = course price.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">6h</td></tr>
+      <tr><td class="tid">T-204</td><td><div class="task-name">A/B test for sales pages</div><div class="task-detail">Creator creates variant B of sales page. Traffic split: 50/50. Track: visitors, checkouts, purchases per variant. Statistical significance indicator. Auto-show winner when confidence > 95%. Pause/stop test.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-med">MED</span></td><td class="est">2d</td></tr>
+      <tr><td class="tid">T-205</td><td><div class="task-name">Festive season campaign templates (India)</div><div class="task-detail">Pre-built campaign kits: Diwali, Holi, New Year, Republic Day. Each kit: email template, WhatsApp template, sales page section, coupon code template. Creator launches with 3 clicks. Pre-scheduled for common dates.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">2d</td></tr>
+      <tr><td class="tid">T-206</td><td><div class="task-name">Booking system for 1-on-1 coaching</div><div class="task-detail">Creator creates "coaching product". Sets available slots via calendar (or connects Calendly). Student books + pays. Auto-confirmation email with Zoom link. Cancellation/reschedule policy. Calendar sync (Google Calendar).</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">2d</td></tr>
+      <tr><td class="tid">T-207</td><td><div class="task-name">Paid webinar / live workshop system</div><div class="task-detail">Creator creates paid live event: title, date, price, Zoom link. Checkout page. Students pay + get access. Webinar room shows at event time. Replay available after. Separate from course system.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">2d</td></tr>
+      <tr><td class="tid">T-208</td><td><div class="task-name">Membership / subscription product type</div><div class="task-detail">Creator creates "membership" (not tied to specific course). Monthly/annual billing. Members access: all courses tagged as "membership content", exclusive community, monthly live call. Upsell to membership from course page.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">3d</td></tr>
+      <tr><td class="tid">T-209</td><td><div class="task-name">Social media post scheduler</div><div class="task-detail">Creator composes posts for Instagram / LinkedIn / Twitter/X. Schedule date+time. Platform posts via APIs. Content calendar view. Bulk schedule. Basic image editor: crop, resize, add text overlay. Useful for course launch campaigns.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-med">MED</span></td><td class="est">3d</td></tr>
+      <tr><td class="tid">T-210</td><td><div class="task-name">Group / B2B enrolment (corporate training)</div><div class="task-detail">Creator sets "group price" for course (e.g. ₹5,000 per seat, min 10 seats). B2B buyer adds seat count → checkout. Single payment. Platform creates all student accounts and enrols. Invoice with company GSTIN. Admin user for the company.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-med">MED</span></td><td class="est">2d</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 3.2 Affiliate -->
+<div class="section" id="p3-affiliate">
+  <div class="section-head">
+    <div class="section-icon" style="background:rgba(74,222,128,.12)">🤝</div>
+    <div class="section-title">3.2 — Affiliate & Referral System</div>
+    <div class="section-count">8 tasks</div>
+  </div>
+  <table class="task-table">
+    <thead><tr><th>ID</th><th>Task</th><th>Type</th><th>Priority</th><th>Est.</th></tr></thead>
+    <tbody>
+      <tr><td class="tid">T-211</td><td><div class="task-name">Affiliate program setup for creators</div><div class="task-detail">Creator enables affiliate program. Sets commission: % or flat ₹ per sale. Sets cookie duration (30d default). Applies to all courses or specific courses. Affiliate link format: /ref/[affiliate_code].</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-212</td><td><div class="task-name">Affiliate registration & portal</div><div class="task-detail">Public affiliate signup page. Creator approves/rejects applicants. Approved affiliates get login to affiliate portal. Portal shows: unique links, clicks, conversions, earnings, payout history. Generate custom links per course.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">2d</td></tr>
+      <tr><td class="tid">T-213</td><td><div class="task-name">Affiliate click & conversion tracking</div><div class="task-detail">On /ref/[code]: store affiliate_code in cookie (30d). On checkout: read cookie → associate affiliate. On payment success: create affiliate_commission record (status=pending). Attribution: last click wins.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-214</td><td><div class="task-name">Affiliate payout processing</div><div class="task-detail">Creator reviews pending commissions. Mark as approved. Pay via: Razorpay Payouts API (direct bank transfer) or mark as manual payout. Generate payout record. Affiliate gets email confirmation. Hold period: 30d after sale (refund window).</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-215</td><td><div class="task-name">Affiliate marketing assets library</div><div class="task-detail">Creator uploads: banners (300×250, 728×90, 160×600), email swipe copy, social media caption templates. Affiliates download from portal. Canva template links. Organised by campaign.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">6h</td></tr>
+      <tr><td class="tid">T-216</td><td><div class="task-name">Student referral program</div><div class="task-detail">Enrolled students get unique referral link. Reward: ₹X discount on next purchase or % commission. Referral dashboard in student portal. Track: referred friends, successful conversions, discount earned. Auto-apply discount on next checkout.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-217</td><td><div class="task-name">Affiliate tier system</div><div class="task-detail">Creator sets tiers: Bronze (0–10 sales, 10% commission), Silver (11–50, 15%), Gold (50+, 20%). Auto-tier upgrade on milestone. Tier badge in affiliate portal. Higher tier affiliates can get early access to new courses.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-med">MED</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-218</td><td><div class="task-name">2-tier affiliate (sub-affiliate) support</div><div class="task-detail">Affiliate A invites Affiliate B. A earns 5% override commission on B's sales. B earns their standard commission. Creator enables/disables this feature. Track ancestry: affiliate_parent_id column. Cap override at 1 level deep.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-med">MED</span></td><td class="est">1d</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 3.3 Advanced Monetise -->
+<div class="section" id="p3-monetise">
+  <div class="section-head">
+    <div class="section-icon" style="background:rgba(192,132,252,.12)">💰</div>
+    <div class="section-title">3.3 — Advanced Monetisation</div>
+    <div class="section-count">10 tasks</div>
+  </div>
+  <table class="task-table">
+    <thead><tr><th>ID</th><th>Task</th><th>Type</th><th>Priority</th><th>Est.</th></tr></thead>
+    <tbody>
+      <tr><td class="tid">T-219</td><td><div class="task-name">Research report / premium PDF product</div><div class="task-detail">Creator uploads PDF. Set price. On purchase: PDF auto-watermarked with buyer name+email (ilovepdf API or puppeteer overlay). Secure download link (expires 48h). Good for finance/trading/market research creators.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-220</td><td><div class="task-name">Tiered course pricing (early bird, regular, VIP)</div><div class="task-detail">Creator sets up to 3 pricing tiers for same course. Each tier: name, price, access level. VIP: includes 1-on-1 call. Countdown to tier expiry. Visible on sales page: strikethrough old price → current price.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">6h</td></tr>
+      <tr><td class="tid">T-221</td><td><div class="task-name">Dynamic pricing (PPP — purchasing power parity)</div><div class="task-detail">Optional: auto-discount for students from lower-income countries (Southeast Asia, Africa). Detect country from IP. Apply pre-set discount tiers. Show "Special price for your country" message. Creator sets PPP discount % by region.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-med">MED</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-222</td><td><div class="task-name">Bulk / team pricing for corporates</div><div class="task-detail">Creator sets "team plan": min 5 seats, ₹X per seat. B2B buyer enters seat count. Invoice generation with company name + GSTIN. One admin manages all seats. Add/remove users from admin panel.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">2d</td></tr>
+      <tr><td class="tid">T-223</td><td><div class="task-name">Free trial for paid courses</div><div class="task-detail">Creator enables: "X days free trial". Student enrolls without payment. Access full course. Trial expiry reminder (3 days before, 1 day before). On expiry: payment required to continue (card-on-file auto-charge option).</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-224</td><td><div class="task-name">Gift a course feature</div><div class="task-detail">Buyer purchases course as gift. Enters recipient email + personalised message. Payment charged to buyer. Recipient gets email with gift message + redeem link. Redeem link creates account + enrols in course.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-med">MED</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-225</td><td><div class="task-name">Course access expiry & renewal</div><div class="task-detail">Creator sets course access duration (e.g. 1 year). Student gets expiry date. Reminder email 30 days, 7 days before expiry. Renew button in student dashboard. Extension purchase at discounted rate.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">6h</td></tr>
+      <tr><td class="tid">T-226</td><td><div class="task-name">Revenue share for co-creators</div><div class="task-detail">Course created by 2+ creators. Set revenue split % per creator. On each payment: auto-split and track attribution. Payout each creator their share via Razorpay Payouts. Each creator sees only their revenue portion.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-med">MED</span></td><td class="est">2d</td></tr>
+      <tr><td class="tid">T-227</td><td><div class="task-name">Invoice customisation for creators</div><div class="task-detail">Creator customises invoice: add logo, change header text, add custom footer (terms, bank details, website). Preview. Custom invoice number prefix (RAHUL-2025-001 vs generic INV-2025-001). Multiple GSTIN if multiple business entities.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">6h</td></tr>
+      <tr><td class="tid">T-228</td><td><div class="task-name">Stripe Tax for global sales</div><div class="task-detail">For international students: integrate Stripe Tax API. Auto-calculate and collect VAT (EU), GST (Australia/Canada), sales tax (US states). Remit on creator's behalf (Stripe handles). Show tax on checkout. Provide tax report.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-med">MED</span></td><td class="est">2d</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════ PHASE 4 ═══ -->
+<div class="phase-header" id="phase4">
+  <div class="phase-tag ph-p4">◆ Phase 4 · Weeks 29–33</div>
+  <h2>AI Layer — Claude API Powered Features</h2>
+  <p>Your biggest technical differentiator. Use the Claude API to save creators hours every week and justify your premium pricing tier.</p>
+  <div class="phase-meta">
+    <div class="pm-item">Duration: <span>5 weeks</span></div>
+    <div class="pm-item">Tasks: <span>20</span></div>
+    <div class="pm-item">Milestone: <span>AI features driving plan upgrades</span></div>
+  </div>
+</div>
+
+<!-- 4.1 AI Features -->
+<div class="section" id="p4-ai">
+  <div class="section-head">
+    <div class="section-icon" style="background:rgba(192,132,252,.12)">🤖</div>
+    <div class="section-title">4.1 — AI-Powered Creator Tools (Claude API)</div>
+    <div class="section-count">20 tasks</div>
+  </div>
+  <table class="task-table">
+    <thead><tr><th>ID</th><th>Task</th><th>Type</th><th>Priority</th><th>Est.</th></tr></thead>
+    <tbody>
+      <tr><td class="tid">T-229</td><td><div class="task-name">AI API integration layer</div><div class="task-detail">Backend service: ai.service.ts. All Claude API calls centralised here. Rate limiting per creator per day (plan-based). Track AI token usage per creator. Billing for AI usage (include in plan or metered add-on).</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-230</td><td><div class="task-name">AI course outline generator</div><div class="task-detail">Creator enters: topic, target audience, duration (hours), format (video/text). Claude generates: course title, 6–8 module names, 4–6 lessons per module, learning outcomes per module, estimated time per lesson. Creator accepts/edits → creates course structure. Hindi + English prompts supported.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-231</td><td><div class="task-name">AI sales page copywriter</div><div class="task-detail">Input: course title, audience, key benefits. Claude generates: headline, subheadline, 5 bullet benefits, target audience section, "what you'll learn" 6 points, FAQ (5 questions + answers), strong CTA text. Streaming output. Edit in place.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-232</td><td><div class="task-name">AI quiz generator from video transcript</div><div class="task-detail">Input: video transcript or pasted text. Claude generates 5–10 MCQ questions with 4 options + correct answer + explanation. Creator reviews, edits, selects which to keep. One-click import to lesson quiz. Saves 45 min per lesson.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-233</td><td><div class="task-name">AI video transcription (Hindi + English)</div><div class="task-detail">On video upload: optionally trigger transcription. Use Whisper API or Deepgram (Hindi support). Generate SRT subtitle file. Display in video player. Editable transcript in lesson editor. Used for quiz generation + blog post creation.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">2d</td></tr>
+      <tr><td class="tid">T-234</td><td><div class="task-name">AI email writer</div><div class="task-detail">In email builder: "Write with AI" button. Input: goal (announce course / re-engage / promote offer), audience, tone (professional/friendly/urgent). Claude writes full email. Streaming. Creator edits. Hindi option.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">6h</td></tr>
+      <tr><td class="tid">T-235</td><td><div class="task-name">AI social media post generator</div><div class="task-detail">Select course → choose platform (Instagram/LinkedIn/WhatsApp) → Claude writes 5 post variations with different angles (testimonial, value tip, course launch, FOMO, story). Creator picks one → edit → schedule. Include hashtag suggestions.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">6h</td></tr>
+      <tr><td class="tid">T-236</td><td><div class="task-name">AI lesson description writer</div><div class="task-detail">Creator writes lesson title. Click "Generate Description". Claude writes 2-paragraph description: what they'll learn + why it matters. Auto-fills lesson description field. Saves time when building large courses (50+ lessons).</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">4h</td></tr>
+      <tr><td class="tid">T-237</td><td><div class="task-name">AI doubt solver for students</div><div class="task-detail">In course player: "Ask AI" button. System prompt: "You are a helpful teaching assistant for the course [title]. Here are the course notes and transcript: [context]". Student types question. Claude answers based on course content. Streaming response. Saves creator from repetitive Q&A.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">2d</td></tr>
+      <tr><td class="tid">T-238</td><td><div class="task-name">AI blog post generator</div><div class="task-detail">Input: course topic / lesson title. Claude writes 800–1,200 word SEO blog post: H1, intro, H2 sections, conclusion, CTA to course. Keyword suggestion. Meta description. Creator edits + publishes to blog. Good for YouTube creators repurposing video content.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">6h</td></tr>
+      <tr><td class="tid">T-239</td><td><div class="task-name">AI content repurposer</div><div class="task-detail">Paste video transcript / blog post. Claude repurposes into: WhatsApp broadcast message, LinkedIn post, Instagram caption, email newsletter snippet, Twitter thread. Each in appropriate format + length. One source → 5 outputs.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">6h</td></tr>
+      <tr><td class="tid">T-240</td><td><div class="task-name">AI email subject line tester</div><div class="task-detail">Creator writes subject line. Claude rates it 1–10 with reasoning: length, curiosity, personalisation, urgency. Suggests 5 alternatives. Shows benchmark: "Similar subjects see X% open rate". Helps non-marketers write better emails.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">4h</td></tr>
+      <tr><td class="tid">T-241</td><td><div class="task-name">AI pricing advisor</div><div class="task-detail">Creator inputs: course topic, duration, depth, target audience. Claude suggests price range with reasoning: compare to similar courses, creator's existing pricing, audience's willingness to pay. Suggests 3 tiers with explanation. India-specific calibration.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">4h</td></tr>
+      <tr><td class="tid">T-242</td><td><div class="task-name">AI website page copy writer</div><div class="task-detail">Creator describes their niche + audience. Claude generates: homepage hero text (headline + subheadline + CTA), about page bio, contact page intro. Creator accepts → populates page builder blocks automatically.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">6h</td></tr>
+      <tr><td class="tid">T-243</td><td><div class="task-name">AI student progress insights</div><div class="task-detail">Weekly cron: for each course, Claude analyses completion data → generates 3 insights for creator. Example: "40% of students drop off at Lesson 7 — the content may be too complex." Creator sees AI insights card on analytics page.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-med">MED</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-244</td><td><div class="task-name">AI FAQ generator for sales pages</div><div class="task-detail">Based on course topic + curriculum, Claude generates 8–10 likely buyer FAQs with answers. Addresses: payment, refund policy, prerequisites, certificate, access duration. Creator edits + adds to sales page FAQ block.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">4h</td></tr>
+      <tr><td class="tid">T-245</td><td><div class="task-name">AI thumbnail prompt generator (for Canva)</div><div class="task-detail">Creator enters course title. Claude generates: 3 Canva-ready design prompts with visual concept, colour palette suggestion, text overlay suggestions. Also generates image description for AI image tools. Helps non-designers create professional thumbnails.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-med">MED</span></td><td class="est">3h</td></tr>
+      <tr><td class="tid">T-246</td><td><div class="task-name">AI usage dashboard for creators</div><div class="task-detail">Creator sees AI features usage: X course outlines generated, Y emails written, Z social posts. Token/credit remaining this month. Upgrade prompt when approaching limit. History of AI generations (can re-use previous outputs).</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">6h</td></tr>
+      <tr><td class="tid">T-247</td><td><div class="task-name">AI translation — English → Hindi content</div><div class="task-detail">In course editor: "Translate to Hindi" button on any text block. Claude translates while maintaining tone and educational context. Creator reviews + edits. Useful for creators wanting to reach non-English audiences.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">4h</td></tr>
+      <tr><td class="tid">T-248</td><td><div class="task-name">AI moderation for community posts</div><div class="task-detail">Automated pre-screening of community posts. Claude checks: spam, promotional content, inappropriate language, off-topic. Flag for creator review if suspicious. Auto-block obvious spam. Learn from creator's approve/reject decisions.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-med">MED</span></td><td class="est">1d</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════ PHASE 5 ═══ -->
+<div class="phase-header" id="phase5">
+  <div class="phase-tag ph-p5">◆ Phase 5 · Weeks 34–36</div>
+  <h2>QA, Performance, Security & Launch</h2>
+  <p>The final stretch. Test everything that can break, optimise for speed, harden security, migrate beta users, and go live with a launch plan.</p>
+  <div class="phase-meta">
+    <div class="pm-item">Duration: <span>3 weeks</span></div>
+    <div class="pm-item">Tasks: <span>28</span></div>
+    <div class="pm-item">Milestone: <span>Public launch 🚀</span></div>
+  </div>
+</div>
+
+<!-- 5.1 QA -->
+<div class="section" id="p5-qa">
+  <div class="section-head">
+    <div class="section-icon" style="background:rgba(74,222,128,.12)">🧪</div>
+    <div class="section-title">5.1 — QA, Testing & Performance</div>
+    <div class="section-count">16 tasks</div>
+  </div>
+  <table class="task-table">
+    <thead><tr><th>ID</th><th>Task</th><th>Type</th><th>Priority</th><th>Est.</th></tr></thead>
+    <tbody>
+      <tr><td class="tid">T-249</td><td><div class="task-name">Unit tests for critical business logic</div><div class="task-detail">Vitest: test all payment calculation functions, GST calculation engine, coupon validation, drip unlock logic, certificate eligibility check, quiz scoring. Aim for 80% coverage on /lib and /services folders.</div></td><td><span class="task-type tt-test">TEST</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">3d</td></tr>
+      <tr><td class="tid">T-250</td><td><div class="task-name">Integration tests for payment flows</div><div class="task-detail">Razorpay test mode: test purchase success, purchase failure, refund, subscription creation, subscription cancellation. Verify: enrolment created, invoice generated, email sent, access granted/revoked. Use Razorpay test credentials.</div></td><td><span class="task-type tt-test">TEST</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">2d</td></tr>
+      <tr><td class="tid">T-251</td><td><div class="task-name">E2E tests for critical user flows</div><div class="task-detail">Playwright tests: creator signup → create course → publish. Student signup → enrol → complete lesson → get certificate. Payment flow end-to-end with Razorpay mock. Run in CI on every PR to main.</div></td><td><span class="task-type tt-test">TEST</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">3d</td></tr>
+      <tr><td class="tid">T-252</td><td><div class="task-name">Cross-browser testing</div><div class="task-detail">Test all creator + student flows on: Chrome (latest), Firefox, Safari, Edge. Test on iOS Safari (iPhone 12+) and Android Chrome (Samsung Galaxy A series — common in India). Fix any browser-specific bugs.</div></td><td><span class="task-type tt-test">TEST</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">2d</td></tr>
+      <tr><td class="tid">T-253</td><td><div class="task-name">Performance audit — Core Web Vitals</div><div class="task-detail">Lighthouse audit on: homepage, course sales page, checkout, student dashboard. Target: LCP < 2.5s, CLS < 0.1, FID < 100ms. Fix: image optimisation (WebP, lazy load), font loading, unused JS, render-blocking resources.</div></td><td><span class="task-type tt-infra">INFRA</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">2d</td></tr>
+      <tr><td class="tid">T-254</td><td><div class="task-name">Load testing — concurrent users</div><div class="task-detail">k6 load test: simulate 500 concurrent users on student dashboard. 100 concurrent checkouts. 1,000 concurrent video streams. Find bottleneck. Optimise: add indexes, cache hot queries in Redis, scale DB connections.</div></td><td><span class="task-type tt-test">TEST</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">2d</td></tr>
+      <tr><td class="tid">T-255</td><td><div class="task-name">Database query optimisation</div><div class="task-detail">Run EXPLAIN ANALYZE on all slow queries (pg_stat_statements). Add missing indexes. Optimise N+1 queries (Prisma include). Add DB indexes: (course_id, student_id) on enrolments, (created_at) on payments, (creator_id) on courses.</div></td><td><span class="task-type tt-db">DB</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">2d</td></tr>
+      <tr><td class="tid">T-256</td><td><div class="task-name">Redis caching for hot data</div><div class="task-detail">Cache: public course pages (5min TTL), creator public profile (5min TTL), course curriculum structure (10min TTL, invalidate on lesson edit). Rate limiting data in Redis. Session storage in Redis.</div></td><td><span class="task-type tt-infra">INFRA</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-257</td><td><div class="task-name">Security penetration testing checklist</div><div class="task-detail">Test: SQL injection (all form inputs), XSS (all user content rendering), CSRF (all POST endpoints), IDOR (try accessing other creator's courses/students via ID manipulation), auth bypass, rate limit bypass. Document and fix all findings.</div></td><td><span class="task-type tt-test">TEST</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">2d</td></tr>
+      <tr><td class="tid">T-258</td><td><div class="task-name">Payment security audit</div><div class="task-detail">Verify: Razorpay signature validation on every webhook, idempotency on payment processing (no double-enrolment), amount tampering prevention (server-side amount calculation, never trust client), PCI compliance checklist.</div></td><td><span class="task-type tt-test">TEST</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-259</td><td><div class="task-name">India-specific device testing</div><div class="task-detail">Test on: low-end Android (Redmi 9A, 2GB RAM, Android 10). Slow 3G network (Chrome DevTools throttling). Test: video loads in 360p, checkout works, payment OTP flow, PDF certificate download. Fix any issues.</div></td><td><span class="task-type tt-test">TEST</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-260</td><td><div class="task-name">Accessibility audit (WCAG 2.1 AA)</div><div class="task-detail">axe-core automated scan. Manual check: keyboard navigation of checkout, course player, form fields. Screen reader test (NVDA + Chrome). Alt text on all images. Focus indicators visible. Color contrast ratios pass.</div></td><td><span class="task-type tt-test">TEST</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-261</td><td><div class="task-name">Beta test with 10 real creators</div><div class="task-detail">Invite 10 Indian YouTube educators (finance, coding, fitness niches). Give free Pro plan. Weekly feedback call. Bug tracking in Linear. Collect: NPS score, feature gaps, confusing UX moments. Prioritise top 20 feedback items.</div></td><td><span class="task-type tt-test">TEST</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1w</td></tr>
+      <tr><td class="tid">T-262</td><td><div class="task-name">Error handling & graceful degradation</div><div class="task-detail">All API errors return structured response {error: {code, message, details}}. Frontend shows user-friendly error messages (not stack traces). Payment failure: clear message + retry option. Video load failure: fallback to lower quality. Network offline: show offline banner.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">2d</td></tr>
+      <tr><td class="tid">T-263</td><td><div class="task-name">Data backup & disaster recovery test</div><div class="task-detail">Test: restore PostgreSQL from daily backup. Verify: all data intact, no corruption. Test time: should complete restore in < 30 min. Document recovery procedure step-by-step. Test R2 file restore. RTO: 2 hours. RPO: 24 hours.</div></td><td><span class="task-type tt-infra">INFRA</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-264</td><td><div class="task-name">Documentation — API docs & creator guides</div><div class="task-detail">OpenAPI/Swagger for public API. Creator knowledge base: getting started, connect Razorpay, custom domain setup, GST settings, course creation guide. Video walkthroughs for each major flow. Hosted at docs.platform.com.</div></td><td><span class="task-type tt-infra">INFRA</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">3d</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 5.2 Launch -->
+<div class="section" id="p5-launch">
+  <div class="section-head">
+    <div class="section-icon" style="background:rgba(255,107,53,.12)">🚀</div>
+    <div class="section-title">5.2 — Launch Preparation & Go-Live</div>
+    <div class="section-count">12 tasks</div>
+  </div>
+  <table class="task-table">
+    <thead><tr><th>ID</th><th>Task</th><th>Type</th><th>Priority</th><th>Est.</th></tr></thead>
+    <tbody>
+      <tr><td class="tid">T-265</td><td><div class="task-name">Platform pricing page & plan configuration</div><div class="task-detail">Design pricing page. 3 plans: Free (0, limited features), Starter (₹999/mo), Pro (₹2,999/mo). Feature gate matrix. Annual discount (2 months free). FAQ on pricing page. Upgrade/downgrade flow in dashboard.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">2d</td></tr>
+      <tr><td class="tid">T-266</td><td><div class="task-name">Platform's own marketing website</div><div class="task-detail">Platform homepage: hero, features section, social proof (beta creator testimonials), pricing, FAQ. Blog for SEO. About us. Contact. Cookie consent (GDPR). Built with Next.js, deployed separately from app.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">3d</td></tr>
+      <tr><td class="tid">T-267</td><td><div class="task-name">Legal pages — Terms of Service, Privacy Policy</div><div class="task-detail">Draft ToS and Privacy Policy with lawyer (or use trusted template + customise). Key India-specific: IT Act 2000, data localisation note, DPDP Act 2023 compliance note. Cookie policy. Refund policy page.</div></td><td><span class="task-type tt-infra">INFRA</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">2d</td></tr>
+      <tr><td class="tid">T-268</td><td><div class="task-name">DPDP Act 2023 compliance (India data privacy)</div><div class="task-detail">Digital Personal Data Protection Act: consent at signup, data processing notice, right to data deletion (export + delete account), data principal rights. Appoint Data Protection Officer (DPO) contact email. DPDP-ready privacy notice.</div></td><td><span class="task-type tt-infra">INFRA</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-269</td><td><div class="task-name">Razorpay live key setup & testing</div><div class="task-detail">Switch from Razorpay test keys to live. Test with ₹1 real payment. Verify: payment captured, webhook received, enrolment created, invoice generated. Verify creator's bank account receives payment. Razorpay dashboard checks.</div></td><td><span class="task-type tt-infra">INFRA</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-270</td><td><div class="task-name">Platform GST registration & compliance</div><div class="task-detail">Register platform business for GST (if charging creators in India). Issue GST invoices to creators for platform subscription fees. Separate from creators' own GST on their course sales. Consult CA for compliance.</div></td><td><span class="task-type tt-infra">INFRA</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">3d</td></tr>
+      <tr><td class="tid">T-271</td><td><div class="task-name">Creator content migration tool</div><div class="task-detail">Import wizard: select source (Teachable / Graphy / manual CSV). Map fields. Import: course titles, descriptions, student list (email only), basic pricing. Reduces switching friction for creators on competitor platforms.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">2d</td></tr>
+      <tr><td class="tid">T-272</td><td><div class="task-name">Production deployment & DNS cutover</div><div class="task-detail">Deploy to production VPS. Point main domain DNS. Test all flows in production with real accounts. Monitor error logs for 2h. Scale up server if needed. Send "we're live" notification to beta users.</div></td><td><span class="task-type tt-infra">INFRA</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-273</td><td><div class="task-name">Launch on Product Hunt</div><div class="task-detail">Schedule PH launch (Tuesday 12:01 AM PST = Tuesday afternoon IST). Pre-brief 20 supporters. Write compelling tagline + description. Prepare Loom demo video. Asset kit for supporters (tweet templates). Engage every comment day-of.</div></td><td><span class="task-type tt-design">DESIGN</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">2d</td></tr>
+      <tr><td class="tid">T-274</td><td><div class="task-name">YouTube creator outreach campaign</div><div class="task-detail">Identify 200 Indian YouTube educators (finance, coding, fitness, CA/CS exam prep, cooking, photography). DM via YouTube, Twitter, LinkedIn. Offer: 6 months free Pro + featured creator badge. Track outreach in Airtable. Target: 30 active creators in month 1.</div></td><td><span class="task-type tt-design">DESIGN</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1w</td></tr>
+      <tr><td class="tid">T-275</td><td><div class="task-name">Launch day war room & monitoring</div><div class="task-detail">Slack channel: launch-ops. Watch: Sentry errors (alert on spike), server CPU/RAM, DB connections, payment success rate (alert if < 90%). Support queue. Pre-drafted responses for common issues. Rollback plan documented.</div></td><td><span class="task-type tt-infra">INFRA</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-276</td><td><div class="task-name">Post-launch 30-day feedback sprint</div><div class="task-detail">Weekly 30-min creator interviews. In-app NPS survey after 7 days. Track: daily active creators, enrolments per week, support tickets by category. Fix top 10 issues every sprint. Share "what we built this week" update with creators.</div></td><td><span class="task-type tt-design">DESIGN</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">4w</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- BONUS: Post-Launch -->
+<div class="phase-header">
+  <div class="phase-tag" style="background:rgba(255,255,255,.06); color:var(--muted); border:1px solid var(--border)">◆ Post-Launch · Ongoing</div>
+  <h2>Post-Launch: Platform Operations & Scale</h2>
+  <p>Tasks that begin after launch and run continuously to grow the platform, retain creators, and maintain quality.</p>
+</div>
+<div class="section">
+  <div class="section-head">
+    <div class="section-icon" style="background:rgba(255,255,255,.06)">♾️</div>
+    <div class="section-title">Ongoing Operations (T-277 to T-285)</div>
+  </div>
+  <table class="task-table">
+    <thead><tr><th>ID</th><th>Task</th><th>Type</th><th>Priority</th><th>Est.</th></tr></thead>
+    <tbody>
+      <tr><td class="tid">T-277</td><td><div class="task-name">Super admin panel — platform management</div><div class="task-detail">Internal dashboard: all creators, MRR, plan distribution, creator health score. Block/suspend creator. Impersonate creator (for support). Feature flag management. A/B test configuration. Platform-wide announcements.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">2d</td></tr>
+      <tr><td class="tid">T-278</td><td><div class="task-name">Feature flag system</div><div class="task-detail">Implement feature flags (Unleash or PostHog). Gate new features behind flags. Roll out to % of creators. Test new UX with subset before full roll-out. Kill switch for buggy features without redeployment.</div></td><td><span class="task-type tt-infra">INFRA</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">1d</td></tr>
+      <tr><td class="tid">T-279</td><td><div class="task-name">Platform revenue analytics (internal)</div><div class="task-detail">Track platform's own metrics: MRR by plan, churn rate, ARPU, creator LTV, CAC by acquisition channel, net revenue retention. Weekly internal report. Dashboard for founders.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">2d</td></tr>
+      <tr><td class="tid">T-280</td><td><div class="task-name">Creator health score system</div><div class="task-detail">Score each creator 0–100 based on: courses published, active students, revenue generated, login frequency, support tickets. Low score → trigger proactive support outreach. High score → nomination for featured creator program.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-med">MED</span></td><td class="est">2d</td></tr>
+      <tr><td class="tid">T-281</td><td><div class="task-name">Zapier / Make.com native integration app</div><div class="task-detail">Publish platform on Zapier: triggers (new_enrolment, payment_success, course_complete, new_lead). Actions (enrol_student, send_announcement, add_tag, create_coupon). This enables creators using Make.com workflows to connect platform data.</div></td><td><span class="task-type tt-api">API</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">3d</td></tr>
+      <tr><td class="tid">T-282</td><td><div class="task-name">Public REST API for power users</div><div class="task-detail">Document and publish REST API: auth (API key), endpoints: list students, create enrolment, get revenue, list courses. Rate limit: 1000 req/hour on Pro plan. SDK in Node.js and Python. OpenAPI spec.</div></td><td><span class="task-type tt-api">API</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">3d</td></tr>
+      <tr><td class="tid">T-283</td><td><div class="task-name">SCORM 1.2 / 2004 support</div><div class="task-detail">Upload SCORM packages. Extract and serve via SCORM player. Track completion and score via SCORM API. Useful for creators converting existing corporate training material. Store xAPI (Tin Can) statements optionally.</div></td><td><span class="task-type tt-be">BE</span></td><td><span class="prio-tag pr-med">MED</span></td><td class="est">3d</td></tr>
+      <tr><td class="tid">T-284</td><td><div class="task-name">Regional language UI expansion</div><div class="task-detail">After Hindi: add Tamil, Telugu, Bengali, Marathi creator UI. i18n with next-intl. Translation via professional translator (not AI) for UI strings. Student portal: show in their preferred language. Language selector in header.</div></td><td><span class="task-type tt-fe">FE</span></td><td><span class="prio-tag pr-high">HIGH</span></td><td class="est">2w</td></tr>
+      <tr><td class="tid">T-285</td><td><div class="task-name">Creator success program — onboarding calls & templates</div><div class="task-detail">30-min onboarding call for every new Pro creator. Course launch checklist template. First 90 days email sequence: tips to get first 100 students. Creator community (Slack/Discord) for networking. Monthly webinar: creator growth strategies.</div></td><td><span class="task-type tt-design">DESIGN</span></td><td><span class="prio-tag pr-must">MUST</span></td><td class="est">Ongoing</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- SUMMARY -->
+<div class="summary-grid">
+  <div class="summary-cell">
+    <div class="sc-phase" style="color:var(--accent5)">Phase 0</div>
+    <div class="sc-n">32</div>
+    <div class="sc-sub">Setup tasks · Wk 1–2</div>
+  </div>
+  <div class="summary-cell">
+    <div class="sc-phase" style="color:var(--accent)">Phase 1</div>
+    <div class="sc-n">96</div>
+    <div class="sc-sub">Foundation · Wk 3–10</div>
+  </div>
+  <div class="summary-cell">
+    <div class="sc-phase" style="color:var(--accent3)">Phase 2</div>
+    <div class="sc-n">68</div>
+    <div class="sc-sub">Core Product · Wk 11–20</div>
+  </div>
+  <div class="summary-cell">
+    <div class="sc-phase" style="color:var(--accent2)">Phase 3</div>
+    <div class="sc-n">42</div>
+    <div class="sc-sub">Growth · Wk 21–28</div>
+  </div>
+  <div class="summary-cell">
+    <div class="sc-phase" style="color:var(--accent4)">Phase 4</div>
+    <div class="sc-n">20</div>
+    <div class="sc-sub">AI Layer · Wk 29–33</div>
+  </div>
+  <div class="summary-cell">
+    <div class="sc-phase" style="color:#f87171">Phase 5</div>
+    <div class="sc-n">27</div>
+    <div class="sc-sub">Launch · Wk 34–36</div>
+  </div>
+  <div class="summary-cell">
+    <div class="sc-phase" style="color:var(--muted)">Post-Launch</div>
+    <div class="sc-n">9</div>
+    <div class="sc-sub">Operations · Ongoing</div>
+  </div>
+  <div class="summary-cell" style="border-left: 2px solid var(--accent);">
+    <div class="sc-phase" style="color:var(--accent)">TOTAL</div>
+    <div class="sc-n" style="color:var(--accent)">285</div>
+    <div class="sc-sub">Tasks · 36 weeks to launch</div>
+  </div>
+</div>
+
+</div>
+</div>
+</body>
+</html>
