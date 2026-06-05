@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+@theme {
+  /* ── Brand Colors ─────────────────────────────── */
+  --color-ink: #0f0e0c;
+  --color-paper: #faf8f4;
+  --color-cream: #f0ece3;
+  --color-warm: #e8e1d4;
+  --color-border: #ddd8ce;
+  --color-muted: #6b6256;
+
+  /* Accent palette */
+  --color-accent: #c84b31;
+  --color-accent-hover: #b03d25;
+  --color-accent2: #2d6a4f;
+  --color-accent3: #1a3a5c;
+  --color-gold: #b8860b;
+
+  /* Dark surface (dashboard) */
+  --color-bg: #0d0d0d;
+  --color-surface: #161616;
+  --color-surface-2: #1e1e1e;
+  --color-surface-3: #252525;
+  --color-surface-border: #2a2a2a;
+
+  /* Semantic */
+  --color-success: #2d6a4f;
+  --color-danger: #c84b31;
+  --color-warning: #b8860b;
+  --color-info: #1a3a5c;
+
+  /* ── Typography ────────────────────────────────── */
+  --font-display: "Fraunces", "Georgia", serif;
+  --font-body: "DM Sans", "system-ui", sans-serif;
+  --font-mono: "JetBrains Mono", "monospace";
+
+  /* ── Spacing / Radius ──────────────────────────── */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-full: 9999px;
+}
+
+:root {
+  --background: var(--color-paper);
+  --foreground: var(--color-ink);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
