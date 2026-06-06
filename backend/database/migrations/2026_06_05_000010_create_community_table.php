@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('communities', function (Blueprint $table) {
-            $table->uuid('id')->primary()->default(DB::raw('gen_random_uuid()'));
+            $table->uuid('id')->primary();
             $table->uuid('creator_id');
             $table->foreign('creator_id')->references('id')->on('creators')->cascadeOnDelete();
             $table->uuid('course_id')->nullable(); // null = standalone community
@@ -24,11 +24,11 @@ return new class extends Migration
         });
 
         Schema::create('community_posts', function (Blueprint $table) {
-            $table->uuid('id')->primary()->default(DB::raw('gen_random_uuid()'));
+            $table->uuid('id')->primary();
             $table->uuid('community_id');
             $table->foreign('community_id')->references('id')->on('communities')->cascadeOnDelete();
 
-            // Author — either a creator or a student
+            // Author â€” either a creator or a student
             $table->uuid('author_id');
             $table->string('author_type');  // App\Models\Creator | App\Models\Student
 
@@ -46,7 +46,7 @@ return new class extends Migration
         });
 
         Schema::create('community_replies', function (Blueprint $table) {
-            $table->uuid('id')->primary()->default(DB::raw('gen_random_uuid()'));
+            $table->uuid('id')->primary();
             $table->uuid('post_id');
             $table->foreign('post_id')->references('id')->on('community_posts')->cascadeOnDelete();
             $table->uuid('author_id');
@@ -62,7 +62,7 @@ return new class extends Migration
             $table->foreign('post_id')->references('id')->on('community_posts')->cascadeOnDelete();
             $table->uuid('student_id');
             $table->foreign('student_id')->references('id')->on('students')->cascadeOnDelete();
-            $table->string('emoji', 10)->default('👍');
+            $table->string('emoji', 10)->default('ðŸ‘');
             $table->timestamp('created_at')->useCurrent();
 
             $table->unique(['post_id', 'student_id']); // one reaction per student per post

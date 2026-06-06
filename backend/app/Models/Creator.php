@@ -14,6 +14,9 @@ class Creator extends Authenticatable
 {
     use HasApiTokens, HasFactory, HasUuids, Notifiable, HasRoles, SoftDeletes;
 
+    // Use 'web' guard for Spatie roles so roles are shared across guards
+    protected $guard_name = 'web';
+
     protected $fillable = [
         'name', 'slug', 'email', 'password', 'avatar_url', 'bio', 'phone',
         'google_id', 'email_verified_at',

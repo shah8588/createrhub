@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('quizzes', function (Blueprint $table) {
-            $table->uuid('id')->primary()->default(DB::raw('gen_random_uuid()'));
+            $table->uuid('id')->primary();
             $table->uuid('lesson_id')->unique();
             $table->foreign('lesson_id')->references('id')->on('lessons')->cascadeOnDelete();
 
@@ -22,7 +22,7 @@ return new class extends Migration
         });
 
         Schema::create('quiz_questions', function (Blueprint $table) {
-            $table->uuid('id')->primary()->default(DB::raw('gen_random_uuid()'));
+            $table->uuid('id')->primary();
             $table->uuid('quiz_id');
             $table->foreign('quiz_id')->references('id')->on('quizzes')->cascadeOnDelete();
 
@@ -37,7 +37,7 @@ return new class extends Migration
         });
 
         Schema::create('quiz_attempts', function (Blueprint $table) {
-            $table->uuid('id')->primary()->default(DB::raw('gen_random_uuid()'));
+            $table->uuid('id')->primary();
             $table->uuid('student_id');
             $table->foreign('student_id')->references('id')->on('students')->cascadeOnDelete();
             $table->uuid('quiz_id');

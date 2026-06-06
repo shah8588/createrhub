@@ -1,14 +1,10 @@
 import api from "./api";
-import axios from "axios";
-
-export async function getCsrfCookie() {
-  await axios.get("/sanctum/csrf-cookie", { withCredentials: true });
-}
+import { tokenStore } from "./token";
 
 export async function creatorLogin(email: string, password: string) {
-  await getCsrfCookie();
   const { data } = await api.post("/auth/login", { email, password });
-  return data;
+  tokenStore.set(data.data.token);
+  return data.data;
 }
 
 export async function creatorRegister(payload: {
@@ -17,16 +13,24 @@ export async function creatorRegister(payload: {
   password: string;
   password_confirmation: string;
 }) {
-  await getCsrfCookie();
   const { data } = await api.post("/auth/register", payload);
-  return data;
+  tokenStore.set(data.data.token);
+  return data.data;
 }
 
 export async function logout() {
-  await api.post("/auth/logout");
+  try {
+    await api.post("/auth/logout");
+  } finally {
+    tokenStore.clear();
+  }
 }
 
 export async function getUser() {
   const { data } = await api.get("/creator/me");
   return data.data;
+}
+
+export function isAuthenticated(): boolean {
+  return Boolean(tokenStore.get());
 }

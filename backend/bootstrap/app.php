@@ -23,6 +23,13 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // Force all API responses to JSON
         $middleware->prependToGroup('api', ForceJsonResponse::class);
+
+        // Register Spatie Permission middleware aliases
+        $middleware->alias([
+            'role'               => \Spatie\Permission\Middleware\RoleMiddleware::class,
+            'permission'         => \Spatie\Permission\Middleware\PermissionMiddleware::class,
+            'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
 

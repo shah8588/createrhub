@@ -11,7 +11,9 @@ use Laravel\Sanctum\HasApiTokens;
 
 class Student extends Authenticatable
 {
-    use HasApiTokens, HasFactory, HasUuids, Notifiable, SoftDeletes;
+    use HasApiTokens, \Spatie\Permission\Traits\HasRoles, HasFactory, HasUuids, Notifiable, SoftDeletes;
+
+    protected $guard_name = 'web';
 
     protected $fillable = [
         'name', 'email', 'password', 'avatar_url', 'phone', 'whatsapp_number',

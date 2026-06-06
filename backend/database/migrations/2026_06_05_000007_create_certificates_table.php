@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('certificate_templates', function (Blueprint $table) {
-            $table->uuid('id')->primary()->default(DB::raw('gen_random_uuid()'));
+            $table->uuid('id')->primary();
             $table->uuid('course_id')->unique();
             $table->foreign('course_id')->references('id')->on('courses')->cascadeOnDelete();
             $table->json('template_data');   // Konva.js canvas JSON
@@ -17,7 +17,7 @@ return new class extends Migration
         });
 
         Schema::create('certificates', function (Blueprint $table) {
-            $table->uuid('id')->primary()->default(DB::raw('gen_random_uuid()'));
+            $table->uuid('id')->primary();
             $table->uuid('student_id');
             $table->foreign('student_id')->references('id')->on('students')->cascadeOnDelete();
             $table->uuid('course_id');

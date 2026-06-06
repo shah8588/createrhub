@@ -1,7 +1,10 @@
 <?php
-namespace App\Http\Controllers$(echo Creator | sed 's/\//\/g');
+
+namespace App\Http\Controllers\Creator;
+
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
+
 class WebsiteController extends Controller
 {
     public function __call($name, $args): JsonResponse

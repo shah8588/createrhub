@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('courses', function (Blueprint $table) {
-            $table->uuid('id')->primary()->default(DB::raw('gen_random_uuid()'));
+            $table->uuid('id')->primary();
             $table->uuid('creator_id');
             $table->foreign('creator_id')->references('id')->on('creators')->cascadeOnDelete();
 
@@ -28,7 +28,7 @@ return new class extends Migration
 
             // Pricing
             $table->enum('pricing_type', ['free', 'one_time', 'subscription', 'payment_plan'])->default('free');
-            $table->unsignedInteger('price_inr')->default(0);   // in paise (₹999 = 99900)
+            $table->unsignedInteger('price_inr')->default(0);   // in paise (â‚¹999 = 99900)
             $table->unsignedInteger('price_usd')->default(0);   // in cents
             $table->unsignedInteger('original_price_inr')->nullable(); // for strikethrough
             $table->boolean('enrolment_open')->default(true);
@@ -60,7 +60,7 @@ return new class extends Migration
         });
 
         Schema::create('modules', function (Blueprint $table) {
-            $table->uuid('id')->primary()->default(DB::raw('gen_random_uuid()'));
+            $table->uuid('id')->primary();
             $table->uuid('course_id');
             $table->foreign('course_id')->references('id')->on('courses')->cascadeOnDelete();
             $table->string('title');
@@ -71,7 +71,7 @@ return new class extends Migration
         });
 
         Schema::create('lessons', function (Blueprint $table) {
-            $table->uuid('id')->primary()->default(DB::raw('gen_random_uuid()'));
+            $table->uuid('id')->primary();
             $table->uuid('module_id');
             $table->foreign('module_id')->references('id')->on('modules')->cascadeOnDelete();
             $table->uuid('course_id');

@@ -26,7 +26,7 @@ Route::get('/health', fn () => response()->json(['status' => 'ok', 'timestamp' =
 // ─── Public routes ─────────────────────────────────────────────────────────────
 Route::prefix('v1')->group(function () {
 
-    // Creator Auth
+    // Creator Auth — also aliased at /auth/login for frontend convenience
     Route::prefix('auth/creator')->group(function () {
         Route::post('register', [CreatorAuthController::class, 'register']);
         Route::post('login', [CreatorAuthController::class, 'login']);
@@ -35,6 +35,11 @@ Route::prefix('v1')->group(function () {
         Route::get('google', [CreatorAuthController::class, 'redirectToGoogle']);
         Route::get('google/callback', [CreatorAuthController::class, 'handleGoogleCallback']);
     });
+    // Short aliases used by the frontend
+    Route::post('auth/register', [CreatorAuthController::class, 'register']);
+    Route::post('auth/login',    [CreatorAuthController::class, 'login']);
+    Route::post('auth/forgot-password', [CreatorAuthController::class, 'forgotPassword']);
+    Route::post('auth/logout', [CreatorAuthController::class, 'logout'])->middleware('auth:sanctum');
 
     // Student Auth
     Route::prefix('auth/student')->group(function () {
@@ -71,7 +76,7 @@ Route::prefix('v1')->group(function () {
         ->prefix('creator')
         ->group(function () {
 
-        Route::get('me', fn (Request $req) => response()->json(['data' => $req->user()->load('settings')]));
+        Route::get('me', [CreatorAuthController::class, 'me']);
         Route::post('auth/logout', [CreatorAuthController::class, 'logout']);
 
         // Dashboard

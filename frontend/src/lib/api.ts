@@ -1,21 +1,32 @@
 import axios, { type AxiosRequestConfig } from "axios";
+import { tokenStore } from "./token";
 
 const api = axios.create({
   baseURL: "/api/v1",
-  withCredentials: true,
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
   },
 });
 
-// Refresh CSRF token on 419 and retry once
+// Attach Bearer token from localStorage on every request
+api.interceptors.request.use((config) => {
+  const token = tokenStore.get();
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+// On 401 clear the token so the UI redirects to login
 api.interceptors.response.use(
   (response) => response,
-  async (error) => {
-    if (error.response?.status === 419) {
-      await axios.get("/sanctum/csrf-cookie", { withCredentials: true });
-      return api.request(error.config);
+  (error) => {
+    if (error.response?.status === 401) {
+      tokenStore.clear();
+      if (typeof window !== "undefined") {
+        window.location.href = "/login";
+      }
     }
     return Promise.reject(error);
   }
