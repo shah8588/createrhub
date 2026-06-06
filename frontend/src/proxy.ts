@@ -1,9 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 const PLATFORM_DOMAINS = ["createrhub.in", "www.createrhub.in", "localhost"];
-const PLATFORM_PORT = "3000";
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const url = request.nextUrl.clone();
   const hostname = request.headers.get("host") ?? "";
 
@@ -27,9 +26,8 @@ export function middleware(request: NextRequest) {
     return NextResponse.rewrite(url);
   }
 
-  // Custom domain → rewrite to /creator/[slug] via API lookup
+  // Custom domain → rewrite to /creator/__custom_domain via API lookup
   // The actual slug lookup is done server-side in the /creator/[slug] page
-  // We use a header to signal this is a custom domain request
   const response = NextResponse.rewrite(
     new URL(`/creator/__custom_domain${url.pathname}`, request.url)
   );

@@ -55,6 +55,7 @@ class LessonController extends Controller
         $lesson->update($request->validate([
             'title'           => ['sometimes', 'string', 'max:255'],
             'content'         => ['nullable', 'string'],
+            'youtube_url'     => ['nullable', 'url'],
             'is_free_preview' => ['boolean'],
             'order'           => ['nullable', 'integer', 'min:1'],
         ]));

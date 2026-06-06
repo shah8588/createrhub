@@ -37,3 +37,37 @@ export function useCreateCourse() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["courses"] }),
   });
 }
+
+export function useUpdateCourse(id: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: Record<string, unknown>) => {
+      const { data } = await api.patch(`/creator/courses/${id}`, payload);
+      return data.data;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["courses", id] }),
+  });
+}
+
+export function useDeleteCourse() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      await api.delete(`/creator/courses/${id}`);
+      return id;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["courses"] }),
+  });
+}
+
+export function usePublishCourse() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, archive = false }: { id: string; archive?: boolean }) => {
+      const endpoint = archive ? "archive" : "publish";
+      const { data } = await api.patch(`/creator/courses/${id}/${endpoint}`);
+      return data.data;
+    },
+    onSuccess: (_, { id }) => qc.invalidateQueries({ queryKey: ["courses", id] }),
+  });
+}

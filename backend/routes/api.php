@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\StudentAuthController;
 use App\Http\Controllers\Creator\CourseController;
 use App\Http\Controllers\Creator\DashboardController;
 use App\Http\Controllers\Creator\LessonController;
+use App\Http\Controllers\Creator\ModuleController;
 use App\Http\Controllers\Creator\PaymentController as CreatorPaymentController;
 use App\Http\Controllers\Creator\StudentCrmController;
 use App\Http\Controllers\Creator\QaController as CreatorQaController;
@@ -87,8 +88,15 @@ Route::prefix('v1')->group(function () {
         Route::patch('courses/{course}/publish', [CourseController::class, 'publish']);
         Route::patch('courses/{course}/archive', [CourseController::class, 'archive']);
 
-        // Lessons (nested under course)
+        // Modules & Lessons (nested under course)
         Route::prefix('courses/{course}')->group(function () {
+            // Modules
+            Route::post('modules', [ModuleController::class, 'store']);
+            Route::patch('modules/{module}', [ModuleController::class, 'update']);
+            Route::delete('modules/{module}', [ModuleController::class, 'destroy']);
+            Route::post('modules/reorder', [ModuleController::class, 'reorder']);
+
+            // Lessons
             Route::apiResource('lessons', LessonController::class)->except(['index']);
             Route::get('lessons', [LessonController::class, 'index']);
             Route::post('lessons/{lesson}/mux-upload-url', [LessonController::class, 'getMuxUploadUrl']);
