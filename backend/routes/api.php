@@ -134,6 +134,7 @@ Route::prefix('v1')->group(function () {
         // Settings
         Route::get('settings', [SettingsController::class, 'show']);
         Route::patch('settings', [SettingsController::class, 'update']);
+        Route::post('settings/change-password', [SettingsController::class, 'changePassword']);
         Route::post('settings/domain/verify', [SettingsController::class, 'verifyDomain']);
     });
 
