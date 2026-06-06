@@ -50,16 +50,29 @@ export default function CoursesPage() {
   const publishCourse = usePublishCourse();
 
   const [modalOpen, setModalOpen] = useState(false);
+  const [wizardStep, setWizardStep] = useState(1);
   const [newTitle, setNewTitle] = useState("");
+  const [newDescription, setNewDescription] = useState("");
+  const [newPricingType, setNewPricingType] = useState("free");
+  const [newPrice, setNewPrice] = useState("");
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
+
+  const openModal = useCallback(() => {
+    setWizardStep(1); setNewTitle(""); setNewDescription(""); setNewPricingType("free"); setNewPrice("");
+    setModalOpen(true);
+  }, []);
 
   const handleCreate = useCallback(async () => {
     if (!newTitle.trim()) return;
-    const course = await createCourse.mutateAsync({ title: newTitle.trim() });
+    const course = await createCourse.mutateAsync({
+      title: newTitle.trim(),
+      description: newDescription.trim() || undefined,
+      pricing_type: newPricingType,
+      price_inr: newPricingType !== "free" ? Number(newPrice) || 0 : 0,
+    });
     setModalOpen(false);
-    setNewTitle("");
     router.push(`/dashboard/courses/${course.id}`);
-  }, [newTitle, createCourse, router]);
+  }, [newTitle, newDescription, newPricingType, newPrice, createCourse, router]);
 
   const handleDelete = useCallback(async () => {
     if (!deleteTarget) return;
@@ -71,7 +84,7 @@ export default function CoursesPage() {
     <div className="p-8">
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-xl font-semibold text-paper">Courses</h1>
-        <Button onClick={() => setModalOpen(true)}>
+        <Button onClick={openModal}>
           <Plus className="mr-2 h-4 w-4" />
           New Course
         </Button>
@@ -84,7 +97,7 @@ export default function CoursesPage() {
           ))}
         </div>
       ) : !courses?.length ? (
-        <EmptyState onNew={() => setModalOpen(true)} />
+        <EmptyState onNew={openModal} />
       ) : (
         <div className="overflow-hidden rounded-xl border border-surface-border bg-surface">
           <table className="w-full text-sm">
@@ -167,28 +180,89 @@ export default function CoursesPage() {
         </div>
       )}
 
-      {/* New Course Modal */}
+      {/* New Course Wizard */}
       <Modal
         open={modalOpen}
-        onClose={() => { setModalOpen(false); setNewTitle(""); }}
-        title="New Course"
-        description="Give your course a title. You can change it later."
+        onClose={() => setModalOpen(false)}
+        title={wizardStep === 1 ? "New Course — Basics" : wizardStep === 2 ? "New Course — Pricing" : "Review & Create"}
+        description={wizardStep === 1 ? "Step 1 of 3 — You can change everything later." : wizardStep === 2 ? "Step 2 of 3 — Set how students will pay." : "Step 3 of 3"}
         size="sm"
       >
-        <Input
-          placeholder="e.g. Complete React Masterclass"
-          value={newTitle}
-          onChange={(e) => setNewTitle(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleCreate()}
-          autoFocus
-        />
+        {wizardStep === 1 && (
+          <div className="space-y-3">
+            <div>
+              <label className="mb-1 block text-xs font-medium text-muted">Title *</label>
+              <Input
+                placeholder="e.g. Complete React Masterclass"
+                value={newTitle}
+                onChange={(e) => setNewTitle(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && newTitle.trim() && setWizardStep(2)}
+                autoFocus
+              />
+            </div>
+            <div>
+              <label className="mb-1 block text-xs font-medium text-muted">Short description</label>
+              <textarea
+                className="w-full resize-none rounded-lg border border-surface-border bg-surface-2 px-3 py-2 text-sm text-paper placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-accent/50"
+                rows={2}
+                placeholder="What will students learn?"
+                value={newDescription}
+                onChange={(e) => setNewDescription(e.target.value)}
+              />
+            </div>
+          </div>
+        )}
+        {wizardStep === 2 && (
+          <div className="space-y-3">
+            <div>
+              <label className="mb-1 block text-xs font-medium text-muted">Pricing type</label>
+              <select
+                className="w-full rounded-lg border border-surface-border bg-surface-2 px-3 py-2 text-sm text-paper focus:outline-none focus:ring-1 focus:ring-accent/50"
+                value={newPricingType}
+                onChange={(e) => setNewPricingType(e.target.value)}
+              >
+                <option value="free">Free</option>
+                <option value="one_time">One-time payment</option>
+                <option value="subscription">Subscription (monthly)</option>
+                <option value="payment_plan">Payment plan</option>
+              </select>
+            </div>
+            {newPricingType !== "free" && (
+              <div>
+                <label className="mb-1 block text-xs font-medium text-muted">Price (₹)</label>
+                <Input
+                  type="number"
+                  min={0}
+                  placeholder="e.g. 1999"
+                  value={newPrice}
+                  onChange={(e) => setNewPrice(e.target.value)}
+                />
+              </div>
+            )}
+          </div>
+        )}
+        {wizardStep === 3 && (
+          <div className="rounded-lg bg-surface-2 p-4 text-sm space-y-1">
+            <p><span className="text-muted">Title:</span> <span className="text-paper font-medium">{newTitle}</span></p>
+            {newDescription && <p><span className="text-muted">Description:</span> <span className="text-paper">{newDescription}</span></p>}
+            <p><span className="text-muted">Pricing:</span> <span className="text-paper capitalize">{newPricingType.replace("_", " ")}{newPricingType !== "free" ? ` — ₹${newPrice}` : ""}</span></p>
+          </div>
+        )}
         <ModalFooter>
-          <Button variant="ghost" onClick={() => { setModalOpen(false); setNewTitle(""); }}>
-            Cancel
-          </Button>
-          <Button onClick={handleCreate} disabled={!newTitle.trim() || createCourse.isPending}>
-            {createCourse.isPending ? "Creating…" : "Create"}
-          </Button>
+          {wizardStep > 1 ? (
+            <Button variant="ghost" onClick={() => setWizardStep(wizardStep - 1)}>Back</Button>
+          ) : (
+            <Button variant="ghost" onClick={() => setModalOpen(false)}>Cancel</Button>
+          )}
+          {wizardStep < 3 ? (
+            <Button onClick={() => setWizardStep(wizardStep + 1)} disabled={wizardStep === 1 && !newTitle.trim()}>
+              Next
+            </Button>
+          ) : (
+            <Button onClick={handleCreate} disabled={!newTitle.trim() || createCourse.isPending}>
+              {createCourse.isPending ? "Creating…" : "Create Course"}
+            </Button>
+          )}
         </ModalFooter>
       </Modal>
 

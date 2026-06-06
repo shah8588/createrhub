@@ -15,6 +15,7 @@ use App\Http\Controllers\Creator\WebsiteController;
 use App\Http\Controllers\Student\EnrolmentController;
 use App\Http\Controllers\Student\LearningController;
 use App\Http\Controllers\Student\QaController as StudentQaController;
+use App\Http\Controllers\Public\CheckoutController;
 use App\Http\Controllers\Public\CreatorPublicController;
 use App\Http\Controllers\Webhook\RazorpayWebhookController;
 use App\Http\Controllers\Webhook\MuxWebhookController;
@@ -27,8 +28,8 @@ Route::get('/health', fn () => response()->json(['status' => 'ok', 'timestamp' =
 // ─── Public routes ─────────────────────────────────────────────────────────────
 Route::prefix('v1')->group(function () {
 
-    // Creator Auth — also aliased at /auth/login for frontend convenience
-    Route::prefix('auth/creator')->group(function () {
+    // Creator Auth (rate-limited: 10/min)
+    Route::prefix('auth/creator')->middleware('throttle:auth')->group(function () {
         Route::post('register', [CreatorAuthController::class, 'register']);
         Route::post('login', [CreatorAuthController::class, 'login']);
         Route::post('forgot-password', [CreatorAuthController::class, 'forgotPassword']);
@@ -37,13 +38,15 @@ Route::prefix('v1')->group(function () {
         Route::get('google/callback', [CreatorAuthController::class, 'handleGoogleCallback']);
     });
     // Short aliases used by the frontend
-    Route::post('auth/register', [CreatorAuthController::class, 'register']);
-    Route::post('auth/login',    [CreatorAuthController::class, 'login']);
-    Route::post('auth/forgot-password', [CreatorAuthController::class, 'forgotPassword']);
+    Route::middleware('throttle:auth')->group(function () {
+        Route::post('auth/register', [CreatorAuthController::class, 'register']);
+        Route::post('auth/login',    [CreatorAuthController::class, 'login']);
+        Route::post('auth/forgot-password', [CreatorAuthController::class, 'forgotPassword']);
+    });
     Route::post('auth/logout', [CreatorAuthController::class, 'logout'])->middleware('auth:sanctum');
 
-    // Student Auth
-    Route::prefix('auth/student')->group(function () {
+    // Student Auth (rate-limited: 10/min)
+    Route::prefix('auth/student')->middleware('throttle:auth')->group(function () {
         Route::post('send-otp', [StudentAuthController::class, 'sendOtp']);
         Route::post('verify-otp', [StudentAuthController::class, 'verifyOtp']);
         Route::post('logout', [StudentAuthController::class, 'logout'])->middleware('auth:sanctum');
@@ -65,6 +68,14 @@ Route::prefix('v1')->group(function () {
             ->with(['student:id,name', 'course:id,title,creator_id', 'course.creator:id,name'])
             ->firstOrFail()
     ));
+
+    // Public checkout (no auth required)
+    Route::prefix('checkout/{courseId}')->group(function () {
+        Route::get('/', [CheckoutController::class, 'show']);
+        Route::post('create-order', [CheckoutController::class, 'createOrder']);
+        Route::post('verify', [CheckoutController::class, 'verify']);
+        Route::post('enrol-free', [CheckoutController::class, 'enrolFree']);
+    });
 
     // Webhooks (signature-verified, NOT Sanctum-protected)
     Route::prefix('webhooks')->group(function () {
@@ -130,6 +141,12 @@ Route::prefix('v1')->group(function () {
         // Website & Pages
         Route::apiResource('pages', WebsiteController::class);
         Route::patch('pages/{page}/publish', [WebsiteController::class, 'publish']);
+
+        // Onboarding
+        Route::post('onboarding/complete', fn (Request $request) => tap(
+            response()->json(['status' => 'success', 'data' => $request->user()]),
+            fn () => $request->user()->update(['onboarding_completed_at' => now()])
+        ));
 
         // Settings
         Route::get('settings', [SettingsController::class, 'show']);

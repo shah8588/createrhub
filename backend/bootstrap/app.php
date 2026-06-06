@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Middleware\ForceJsonResponse;
+use App\Http\Middleware\SecurityHeaders;
+use App\Http\Middleware\SanitizeHtml;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -24,6 +26,12 @@ return Application::configure(basePath: dirname(__DIR__))
         // Force all API responses to JSON
         $middleware->prependToGroup('api', ForceJsonResponse::class);
 
+        // Security headers on every response
+        $middleware->append(SecurityHeaders::class);
+
+        // Sanitize HTML fields on mutating API requests
+        $middleware->appendToGroup('api', SanitizeHtml::class);
+
         // Register Spatie Permission middleware aliases
         $middleware->alias([
             'role'               => \Spatie\Permission\Middleware\RoleMiddleware::class,
@@ -37,9 +45,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->render(function (ValidationException $e, Request $request) {
             if ($request->expectsJson()) {
                 return response()->json([
-                    'status' => 'error',
+                    'status'  => 'error',
                     'message' => 'Validation failed',
-                    'errors' => $e->errors(),
+                    'errors'  => $e->errors(),
                 ], 422);
             }
         });
@@ -47,7 +55,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->render(function (AuthenticationException $e, Request $request) {
             if ($request->expectsJson()) {
                 return response()->json([
-                    'status' => 'error',
+                    'status'  => 'error',
                     'message' => 'Unauthenticated',
                 ], 401);
             }
@@ -56,7 +64,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->render(function (NotFoundHttpException $e, Request $request) {
             if ($request->expectsJson()) {
                 return response()->json([
-                    'status' => 'error',
+                    'status'  => 'error',
                     'message' => 'Resource not found',
                 ], 404);
             }

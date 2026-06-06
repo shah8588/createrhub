@@ -19,7 +19,7 @@ class Creator extends Authenticatable
 
     protected $fillable = [
         'name', 'slug', 'email', 'password', 'avatar_url', 'bio', 'phone',
-        'google_id', 'email_verified_at',
+        'google_id', 'email_verified_at', 'onboarding_completed_at',
         'gstin', 'business_name', 'business_address', 'state_code',
         'razorpay_account_id', 'razorpay_access_token', 'stripe_account_id',
         'plan', 'plan_expires_at', 'razorpay_subscription_id',
@@ -31,8 +31,9 @@ class Creator extends Authenticatable
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
-            'plan_expires_at' => 'datetime',
+            'email_verified_at'        => 'datetime',
+            'onboarding_completed_at'  => 'datetime',
+            'plan_expires_at'          => 'datetime',
             'password' => 'hashed',
             'razorpay_access_token' => 'encrypted',
         ];
